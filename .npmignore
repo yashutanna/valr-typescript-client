@@ -1,0 +1,29 @@
+# Source files
+src/
+tests/
+examples/
+
+# Configuration
+tsconfig.json
+tsup.config.ts
+.eslintrc.js
+vitest.config.ts
+
+# Documentation
+*.md
+!README.md
+
+# Development files
+.github/
+.vscode/
+.idea/
+
+# Test coverage
+coverage/
+
+# Environment
+.env*
+
+# Misc
+*.log
+.DS_Store
