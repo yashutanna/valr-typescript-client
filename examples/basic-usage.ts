@@ -1,5 +1,6 @@
 import { ValrClient } from '../src';
 import dotenv from "dotenv";
+dotenv.config();
 
 // Example 1: Public API usage (no authentication required)
 async function publicAPIExample() {
@@ -25,7 +26,6 @@ async function publicAPIExample() {
 
 // Example 2: Authenticated API usage
 async function authenticatedAPIExample() {
-  dotenv.config();
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -92,8 +92,23 @@ async function futuresExample() {
   console.log(`Current leverage: ${leverage.leverageMultiple}x`);
 }
 
+
+// Example 4: Earn Products
+async function earnExample() {
+    const client = new ValrClient({
+        apiKey: process.env.VALR_API_KEY!,
+        apiSecret: process.env.VALR_API_SECRET!,
+    });
+
+    const stakeRates = await client.stake.getRates();
+    stakeRates.forEach((rate) => {
+        console.log(`  ${rate.currencySymbol}: ${rate.rate}`);
+    });
+}
+
 // Run examples (comment out as needed)
 // publicAPIExample().catch(console.error);
-authenticatedAPIExample().catch(console.error);
+// authenticatedAPIExample().catch(console.error);
 // tradingExample().catch(console.error);
 // futuresExample().catch(console.error);
+earnExample().catch(console.error);

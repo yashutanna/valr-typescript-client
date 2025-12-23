@@ -23,7 +23,7 @@ export { WalletsAPI } from './api/wallets';
 export { FuturesAPI } from './api/futures';
 export { MarginAPI } from './api/margin';
 export { LoansAPI } from './api/loans';
-export { EarnAPI } from './api/earn';
+export { StakeAPI } from './api/stake';
 export { PayAPI } from './api/pay';
 export { BundlesAPI } from './api/bundles';
 export { HealthAPI } from './api/health';

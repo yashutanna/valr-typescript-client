@@ -140,13 +140,21 @@ export type {
   LoanHistoryParams,
 } from './loans';
 
-// Earn types
+// Stake/Earn types
 export type {
-  EarnProduct,
-  SubscribeEarnRequest,
-  EarnSubscription,
-  RedeemEarnRequest,
-} from './earn';
+  EarnType,
+  StakeRequest,
+  UnstakeRequest,
+  EarnBalance,
+  EarnRate,
+  EarnReward,
+  EarnHistoryType,
+  EarnHistoryItem,
+  EarnBalancesParams,
+  EarnRatesParams,
+  EarnRewardsParams,
+  EarnHistoryParams,
+} from './stake';
 
 // Pay types
 export type {

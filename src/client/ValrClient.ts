@@ -9,7 +9,7 @@ import { WalletsAPI } from '../api/wallets';
 import { FuturesAPI } from '../api/futures';
 import { MarginAPI } from '../api/margin';
 import { LoansAPI } from '../api/loans';
-import { EarnAPI } from '../api/earn';
+import { StakeAPI } from '../api/stake';
 import { PayAPI } from '../api/pay';
 import { BundlesAPI } from '../api/bundles';
 import { HealthAPI } from '../api/health';
@@ -103,9 +103,9 @@ export class ValrClient {
   public readonly loans: LoansAPI;
 
   /**
-   * Earn API methods (requires authentication)
+   * Staking/Earn API methods (requires authentication)
    */
-  public readonly earn: EarnAPI;
+  public readonly stake: StakeAPI;
 
   /**
    * Pay API methods (requires authentication)
@@ -157,8 +157,30 @@ export class ValrClient {
       if (this.apiKey && this.apiSecret) {
         const timestamp = RequestSigner.getTimestamp();
         const method = config.method?.toUpperCase() || 'GET';
-        const url = config.url || '';
+        let url = config.url || '';
         const body = config.data ? JSON.stringify(config.data) : '';
+
+        // Include query parameters in the signature path
+        if (config.params) {
+          // Build query string WITHOUT encoding to match what Axios sends
+          // and what VALR expects in the signature
+          const queryParts: string[] = [];
+          Object.keys(config.params).sort().forEach(key => {
+            const value = config.params[key];
+            if (value !== undefined && value !== null) {
+              // Don't URL encode - use raw values
+              queryParts.push(`${key}=${value}`);
+            }
+          });
+          if (queryParts.length > 0) {
+            url = `${url}?${queryParts.join('&')}`;
+          }
+
+          // Update config.url with the query string and clear params
+          // so Axios uses our exact URL instead of building its own query string
+          config.url = url;
+          delete config.params;
+        }
 
         const signature = RequestSigner.signRequest({
           apiSecret: this.apiSecret,
@@ -191,7 +213,7 @@ export class ValrClient {
     this.futures = new FuturesAPI(this.http);
     this.margin = new MarginAPI(this.http);
     this.loans = new LoansAPI(this.http);
-    this.earn = new EarnAPI(this.http);
+    this.stake = new StakeAPI(this.http);
     this.pay = new PayAPI(this.http);
     this.bundles = new BundlesAPI(this.http);
     this.health = new HealthAPI(this.http);

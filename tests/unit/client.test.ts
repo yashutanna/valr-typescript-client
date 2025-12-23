@@ -93,7 +93,7 @@ describe('ValrClient', () => {
       expect(client.futures).toBeDefined();
       expect(client.margin).toBeDefined();
       expect(client.loans).toBeDefined();
-      expect(client.earn).toBeDefined();
+      expect(client.stake).toBeDefined();
       expect(client.pay).toBeDefined();
       expect(client.bundles).toBeDefined();
       expect(client.health).toBeDefined();
