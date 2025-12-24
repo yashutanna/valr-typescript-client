@@ -195,6 +195,7 @@ export class ValrClient {
         config.headers[HEADERS.API_KEY] = this.apiKey;
         config.headers[HEADERS.SIGNATURE] = signature;
         config.headers[HEADERS.TIMESTAMP] = timestamp.toString();
+        config.headers[HEADERS.CONTENT_TYPE] = config.headers.getContentType();
 
         // Add subaccount header if provided
         if (this.subaccountId) {

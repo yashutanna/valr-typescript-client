@@ -1,61 +1,111 @@
-import type { CurrencyCode, ISOTimestamp, PaginationParams } from './common';
+import type { CurrencyCode, ISOTimestamp } from './common';
 
 /**
- * Loan request
+ * Loan rate information
  */
-export interface CreateLoanRequest {
-  /** Currency to borrow */
+export interface LoanRate {
+  /** Currency symbol */
   currency: CurrencyCode;
-  /** Amount to borrow */
-  amount: string;
-  /** Interest rate (annual) */
-  rate: string;
-  /** Loan duration in days */
-  durationDays: number;
+  /** Interest rate applied during the most recent interest auction */
+  previousFundingRate: number;
+  /** Estimated rate of interest for the next funding period */
+  estimatedNextRate: number;
+  /** Estimated interest rate that will be charged to borrowers in the next funding round */
+  estimatedNextBorrowRate: string;
 }
 
 /**
- * Loan
+ * Open loan
  */
-export interface Loan {
-  /** Loan ID */
-  id: string;
-  /** Currency */
-  currency: CurrencyCode;
-  /** Borrowed amount */
-  amount: string;
-  /** Outstanding amount */
-  outstandingAmount: string;
-  /** Interest rate */
-  rate: string;
-  /** Accrued interest */
-  accruedInterest: string;
-  /** Loan status */
-  status: 'ACTIVE' | 'REPAID' | 'DEFAULTED' | 'LIQUIDATED';
-  /** When loan was created */
-  createdAt: ISOTimestamp;
-  /** When loan matures */
-  maturityDate: ISOTimestamp;
-  /** Last interest payment date */
-  lastInterestPayment?: ISOTimestamp;
-}
-
-/**
- * Repay loan request
- */
-export interface RepayLoanRequest {
+export interface OpenLoan {
   /** Loan ID */
   loanId: string;
-  /** Amount to repay */
+  /** Currency symbol */
+  currency: CurrencyCode;
+  /** Total loan amount */
+  totalAmount: string;
+  /** Amount of the loan that has been used */
+  usedAmount: string;
+  /** Hourly interest rate */
+  hourlyRate: string;
+  /** When the loan was created */
+  createdAt: ISOTimestamp;
+  /** When the loan was last updated */
+  updatedAt: ISOTimestamp;
+}
+
+/**
+ * Create loan request
+ */
+export interface CreateLoanRequest {
+  /** Currency symbol to borrow */
+  currencySymbol: CurrencyCode;
+  /** Hourly interest rate */
+  hourlyRate: string;
+  /** Amount to borrow */
   amount: string;
 }
 
 /**
- * Loan history params
+ * Loan credit history item
  */
-export interface LoanHistoryParams extends PaginationParams {
-  /** Filter by currency */
-  currency?: CurrencyCode;
-  /** Filter by status */
-  status?: 'ACTIVE' | 'REPAID' | 'DEFAULTED' | 'LIQUIDATED';
+export interface LoanCreditHistoryItem {
+  /** Currency symbol */
+  currency: CurrencyCode;
+  /** Interest amount charged */
+  interestAmount: string;
+  /** Loan quantity/amount */
+  quantity: string;
+  /** When this credit entry was created */
+  createdAt: ISOTimestamp;
+}
+
+/**
+ * Increase loan amount request
+ */
+export interface IncreaseLoanRequest {
+  /** Currency symbol */
+  currencySymbol: CurrencyCode;
+  /** Amount to increase the loan by */
+  increaseLoanAmountBy: string;
+  /** Loan ID */
+  loanId: string;
+}
+
+/**
+ * Change loan rate request
+ */
+export interface ChangeLoanRateRequest {
+  /** Currency symbol */
+  currencySymbol: CurrencyCode;
+  /** New hourly rate */
+  hourlyRate: string;
+  /** Loan ID */
+  loanId: string;
+}
+
+/**
+ * Request unlock request
+ */
+export interface RequestUnlockRequest {
+  /** Currency symbol */
+  currencySymbol: CurrencyCode;
+  /** Amount to unlock */
+  unlockAmount: string;
+  /** Loan ID */
+  loanId: string;
+}
+
+/**
+ * Borrow history item
+ */
+export interface BorrowHistoryItem {
+  /** Currency symbol */
+  currency: CurrencyCode;
+  /** Borrow amount */
+  amount: string;
+  /** Interest rate */
+  rate: string;
+  /** When the borrow occurred */
+  createdAt: ISOTimestamp;
 }

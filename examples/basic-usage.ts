@@ -100,10 +100,27 @@ async function earnExample() {
         apiSecret: process.env.VALR_API_SECRET!,
     });
 
-    const stakeRates = await client.stake.getRates();
+    const stakeRates = await client.stake.getRates({earnType: "STAKE"});
+    const defiLendRates = await client.stake.getRates({earnType: "LEND"});
+    const exchangeLendRates = await client.loans.getRates();
+
+    console.log("staking rates")
     stakeRates.forEach((rate) => {
-        console.log(`  ${rate.currencySymbol}: ${rate.rate}`);
+        console.log(`  ${rate.currencySymbol}: ${(Number(rate.rate) * (365*24) * 100).toFixed(2)}%`);
     });
+    console.log("defi-lending rates")
+    defiLendRates.forEach((rate) => {
+        console.log(`  ${rate.currencySymbol}: ${(Number(rate.rate) * (365*24) * 100).toFixed(2)}%`);
+    });
+    console.log("exchange lending rates")
+    exchangeLendRates.forEach((rate) => {
+        if(rate.estimatedNextRate){
+            console.log(`  ${rate.currency}: ${(Number(rate.estimatedNextRate) * (365*24) * 100).toFixed(2)}%`);
+        } else if(Number(rate.estimatedNextBorrowRate) > 0){
+            console.log(`  ${rate.currency}: ${(Number(rate.estimatedNextBorrowRate) * (365*24) * 100).toFixed(2)}%`);
+        }
+    });
+
 }
 
 // Run examples (comment out as needed)

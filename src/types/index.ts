@@ -134,10 +134,14 @@ export type {
 
 // Loans types
 export type {
+  LoanRate,
+  OpenLoan,
   CreateLoanRequest,
-  Loan,
-  RepayLoanRequest,
-  LoanHistoryParams,
+  LoanCreditHistoryItem,
+  IncreaseLoanRequest,
+  ChangeLoanRateRequest,
+  RequestUnlockRequest,
+  BorrowHistoryItem,
 } from './loans';
 
 // Stake/Earn types
