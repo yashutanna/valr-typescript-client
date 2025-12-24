@@ -42,12 +42,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/valr-typescript-client.git"
+    "url": "https://github.com/yashutanna/valr-typescript-client.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/valr-typescript-client/issues"
+    "url": "https://github.com/yashutanna/valr-typescript-client/issues"
   },
-  "homepage": "https://github.com/yourusername/valr-typescript-client#readme",
+  "homepage": "https://github.com/yashutanna/valr-typescript-client#readme",
   "dependencies": {
     "axios": "^1.6.0",
     "eventemitter3": "^5.0.1",
