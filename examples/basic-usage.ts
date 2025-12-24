@@ -123,9 +123,25 @@ async function earnExample() {
 
 }
 
+// Example 5: Crypto wallets
+async function walletExample() {
+    const client = new ValrClient({
+        apiKey: process.env.VALR_API_KEY!,
+        apiSecret: process.env.VALR_API_SECRET!,
+    });
+
+    const usdcEthereum = await client.wallets.getCryptoDepositAddress("USDC", "Ethereum")
+    const ethEthereum = await client.wallets.getCryptoDepositAddress("ETH", "Ethereum")
+    const usdcAvalanche = await client.wallets.getCryptoDepositAddress("USDC", "Avalanche")
+    console.log("USDC address(Ethereum)", usdcEthereum)
+    console.log("ETH address(Ethereum)", ethEthereum)
+    console.log("USDC address(Avalanche)", usdcAvalanche)
+}
+
 // Run examples (comment out as needed)
 // publicAPIExample().catch(console.error);
 // authenticatedAPIExample().catch(console.error);
+walletExample().catch(console.error);
 // tradingExample().catch(console.error);
 // futuresExample().catch(console.error);
-earnExample().catch(console.error);
+// earnExample().catch(console.error);

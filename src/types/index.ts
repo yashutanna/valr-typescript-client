@@ -102,15 +102,23 @@ export type {
 // Wallets types
 export type {
   DepositAddress,
+  CryptoDepositHistoryItem,
+  WhitelistedAddress,
+  WithdrawalConfigInfo,
   CryptoWithdrawalRequest,
   CryptoWithdrawalResponse,
   CryptoWithdrawalStatus,
   CryptoWithdrawalHistoryParams,
+  CryptoWithdrawalHistoryItem,
+  ServiceProvider,
+  Bank,
   BankAccount,
   LinkBankAccountRequest,
+  FiatDepositReference,
+  AutoBuyDepositReference,
+  AutoBuyCurrency,
   FiatWithdrawalRequest,
   FiatWithdrawalResponse,
-  FiatDepositReference,
 } from './wallets';
 
 // Futures types
