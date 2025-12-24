@@ -13,7 +13,7 @@ export { ValrClient, ValrClientConfig } from './client/ValrClient';
 // Export WebSocket clients
 export { AccountWebSocket } from './client/AccountWebSocket';
 export { TradeWebSocket } from './client/TradeWebSocket';
-export type { WebSocketClientConfig } from './client/ValrWebSocketClient';
+export { ValrWebSocketClient, WebSocketClientConfig } from './client/ValrWebSocketClient';
 
 // Export API classes (for advanced usage)
 export { PublicAPI } from './api/public';
