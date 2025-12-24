@@ -3,6 +3,7 @@ import EventEmitter from 'eventemitter3';
 import { RequestSigner } from '../auth/RequestSigner';
 import { ValrWebSocketError } from '../errors/ValrError';
 import type { WebSocketMessage } from '../types';
+import {WS_BASE_URL} from "../utils/constants";
 
 /**
  * WebSocket client configuration
@@ -20,6 +21,8 @@ export interface WebSocketClientConfig {
   reconnectDelay?: number;
   /** Maximum reconnect attempts (default: Infinity) */
   maxReconnectAttempts?: number;
+  /** Base URL for WS (defaults to wss://api.valr.com) */
+  baseURL?: string;
 }
 
 /**
@@ -41,6 +44,7 @@ export interface WebSocketEvents {
 export abstract class ValrWebSocketClient<TEvents extends WebSocketEvents = WebSocketEvents> extends EventEmitter<TEvents> {
   protected ws?: WebSocket;
   protected url: string;
+  protected path: string;
   protected config: Required<WebSocketClientConfig>;
   protected reconnectAttempts = 0;
   protected reconnectTimer?: NodeJS.Timeout;
@@ -48,9 +52,8 @@ export abstract class ValrWebSocketClient<TEvents extends WebSocketEvents = WebS
   protected isConnected = false;
   protected isAuthenticated = false;
 
-  constructor(url: string, config: WebSocketClientConfig = {}) {
+  constructor(path: string, config: WebSocketClientConfig = {}) {
     super();
-    this.url = url;
     this.config = {
       apiKey: config.apiKey || '',
       apiSecret: config.apiSecret || '',
@@ -58,7 +61,10 @@ export abstract class ValrWebSocketClient<TEvents extends WebSocketEvents = WebS
       autoReconnect: config.autoReconnect ?? true,
       reconnectDelay: config.reconnectDelay || 5000,
       maxReconnectAttempts: config.maxReconnectAttempts || Infinity,
+      baseURL: config.baseURL || WS_BASE_URL
     };
+    this.url = `${this.config.baseURL}${path}`;
+    this.path = path;
   }
 
   /**
@@ -72,7 +78,32 @@ export abstract class ValrWebSocketClient<TEvents extends WebSocketEvents = WebS
     this.isIntentionalClose = false;
 
     try {
-      this.ws = new WebSocket(this.url);
+      // Build WebSocket options with authentication headers if credentials provided
+      const wsOptions: WebSocket.ClientOptions = {};
+
+      if (this.config.apiKey && this.config.apiSecret) {
+        const timestamp = RequestSigner.getTimestamp();
+        const signature = RequestSigner.signRequest({
+          apiSecret: this.config.apiSecret,
+          timestamp,
+          verb: 'GET',
+          path: this.path,
+          body: '',
+          subaccountId: this.config.subaccountId,
+        });
+
+        wsOptions.headers = {
+          'X-VALR-API-KEY': this.config.apiKey,
+          'X-VALR-SIGNATURE': signature,
+          'X-VALR-TIMESTAMP': timestamp.toString(),
+        };
+
+        if (this.config.subaccountId) {
+          wsOptions.headers['X-VALR-SUB-ACCOUNT-ID'] = this.config.subaccountId;
+        }
+      }
+
+      this.ws = new WebSocket(this.url, wsOptions);
 
       this.ws.on('open', () => {
         this.handleOpen();
@@ -138,33 +169,13 @@ export abstract class ValrWebSocketClient<TEvents extends WebSocketEvents = WebS
     // @ts-ignore - Base event is always available
     this.emit('connected');
 
-    // Authenticate if credentials are provided
+    // If credentials were provided, authentication happened via headers during handshake
     if (this.config.apiKey && this.config.apiSecret) {
-      this.authenticate();
+      this.isAuthenticated = true;
+      // @ts-ignore - Base event is always available
+      this.emit('authenticated');
+      this.onAuthenticated();
     }
-  }
-
-  /**
-   * Authenticate WebSocket connection
-   */
-  protected authenticate(): void {
-    const timestamp = RequestSigner.getTimestamp();
-    const signature = RequestSigner.signRequest({
-      apiSecret: this.config.apiSecret,
-      timestamp,
-      verb: 'GET',
-      path: '/ws',
-      subaccountId: this.config.subaccountId,
-    });
-
-    // Send authentication message
-    this.send({
-      type: 'AUTHENTICATE',
-      apiKey: this.config.apiKey,
-      signature,
-      timestamp,
-      subaccountId: this.config.subaccountId || undefined,
-    });
   }
 
   /**
@@ -173,15 +184,6 @@ export abstract class ValrWebSocketClient<TEvents extends WebSocketEvents = WebS
   protected handleMessage(data: WebSocket.Data): void {
     try {
       const message = JSON.parse(data.toString()) as WebSocketMessage;
-
-      // Handle authentication response
-      if (message.type === 'AUTHENTICATED') {
-        this.isAuthenticated = true;
-        // @ts-ignore - Base event is always available
-        this.emit('authenticated');
-        this.onAuthenticated();
-        return;
-      }
 
       // Emit the message event
       // @ts-ignore - Base event is always available

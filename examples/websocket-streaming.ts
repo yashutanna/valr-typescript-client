@@ -1,4 +1,6 @@
 import { AccountWebSocket, TradeWebSocket } from '../src';
+import dotenv from "dotenv";
+dotenv.config();
 
 /**
  * Example 1: Trade WebSocket - Real-time market data (no authentication required)
@@ -110,10 +112,10 @@ async function accountWebSocketExample() {
 
   wsClient.on('balance:update', (update) => {
     console.log('\n💰 Balance Update:');
-    console.log(`  Currency: ${update.currency}`);
-    console.log(`  Available: ${update.available}`);
-    console.log(`  Reserved: ${update.reserved}`);
-    console.log(`  Total: ${update.total}`);
+    console.log(`  Currency: ${update.data.currency.symbol}`);
+    console.log(`  Available: ${update.data.available}`);
+    console.log(`  Reserved: ${update.data.reserved}`);
+    console.log(`  Total: ${update.data.total}`);
   });
 
   wsClient.on('trade:new', (trade) => {
@@ -240,7 +242,7 @@ async function autoReconnectExample() {
 // Run examples
 // Uncomment the example you want to run:
 
-tradeWebSocketExample().catch(console.error);
-// accountWebSocketExample().catch(console.error);
+// tradeWebSocketExample().catch(console.error);
+accountWebSocketExample().catch(console.error);
 // multipleSubscriptionsExample().catch(console.error);
 // autoReconnectExample().catch(console.error);

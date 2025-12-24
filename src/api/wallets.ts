@@ -1,6 +1,7 @@
 import type { HttpClient } from '../utils/http';
 import type {
   DepositAddress,
+  CryptoDepositHistoryParams,
   CryptoDepositHistoryItem,
   WhitelistedAddress,
   WithdrawalConfigInfo,
@@ -15,7 +16,6 @@ import type {
   LinkBankAccountRequest,
   FiatDepositReference,
   AutoBuyDepositReference,
-  AutoBuyCurrency,
   FiatWithdrawalRequest,
   FiatWithdrawalResponse,
   CurrencyCode,
@@ -59,22 +59,26 @@ export class WalletsAPI {
   /**
    * Get crypto deposit history
    *
-   * @param skip - Number of records to skip
-   * @param limit - Maximum number of records to return
+   * @param params - Optional query parameters for filtering
    * @returns Promise resolving to array of deposit history items
    *
    * @example
    * ```typescript
-   * const deposits = await client.wallets.getCryptoDepositHistory(0, 100);
+   * const deposits = await client.wallets.getCryptoDepositHistory({
+   *   skip: 0,
+   *   limit: 100,
+   *   currency: 'BTC',
+   *   startTime: '2025-01-01T00:00:00Z',
+   *   endTime: '2025-01-31T23:59:59Z'
+   * });
    * ```
    */
   async getCryptoDepositHistory(
-    skip?: number,
-    limit?: number
+    params?: CryptoDepositHistoryParams
   ): Promise<CryptoDepositHistoryItem[]> {
     const response = await this.http.get<CryptoDepositHistoryItem[]>(
       '/v1/wallet/crypto/deposit/history',
-      { params: { skip, limit } }
+      { params }
     );
     return response.data;
   }
@@ -378,18 +382,18 @@ export class WalletsAPI {
    * Returns which crypto currencies can be auto-bought with the specified fiat currency.
    *
    * @param currencyCode - Fiat currency code
-   * @returns Promise resolving to array of supported auto-buy currencies
+   * @returns Promise resolving to array of supported currency codes
    *
    * @example
    * ```typescript
    * const currencies = await client.wallets.getAutoBuyCurrencies('ZAR');
-   * currencies.forEach(c => {
-   *   console.log(`${c.currencySymbol}: ${c.enabled ? 'enabled' : 'disabled'}`);
+   * currencies.forEach(code => {
+   *   console.log(`Supports auto-buy for: ${code}`);
    * });
    * ```
    */
-  async getAutoBuyCurrencies(currencyCode: CurrencyCode): Promise<AutoBuyCurrency[]> {
-    const response = await this.http.get<AutoBuyCurrency[]>(
+  async getAutoBuyCurrencies(currencyCode: CurrencyCode): Promise<CurrencyCode[]> {
+    const response = await this.http.get<CurrencyCode[]>(
       `/v1/wallet/fiat/${currencyCode}/auto-buy`
     );
     return response.data;

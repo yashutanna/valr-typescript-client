@@ -1,5 +1,5 @@
 import { ValrWebSocketClient, WebSocketClientConfig, WebSocketEvents } from './ValrWebSocketClient';
-import { WS_TRADE_URL } from '../utils/constants';
+import {WS_TRADE_URL_PATH} from '../utils/constants';
 import type {
   WebSocketMessage,
   Subscription,
@@ -56,7 +56,7 @@ export type TradeWebSocketEventMap = WebSocketEvents & TradeWebSocketEvents;
  */
 export class TradeWebSocket extends ValrWebSocketClient<TradeWebSocketEventMap> {
   constructor(config: WebSocketClientConfig = {}) {
-    super(WS_TRADE_URL, config);
+    super(WS_TRADE_URL_PATH, config);
   }
 
   /**

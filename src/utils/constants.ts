@@ -6,12 +6,13 @@
  * Base URL for VALR API
  */
 export const API_BASE_URL = 'https://api.valr.com';
+export const WS_BASE_URL = 'wss://api.valr.com';
 
 /**
  * WebSocket URLs
  */
-export const WS_ACCOUNT_URL = 'wss://api.valr.com/ws/account';
-export const WS_TRADE_URL = 'wss://api.valr.com/ws/trade';
+export const WS_ACCOUNT_URL_PATH = '/ws/account';
+export const WS_TRADE_URL_PATH = '/ws/trade';
 
 /**
  * API rate limits

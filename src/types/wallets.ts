@@ -20,6 +20,22 @@ export interface DepositAddress {
 }
 
 /**
+ * Crypto deposit history params
+ */
+export interface CryptoDepositHistoryParams {
+  /** Number of records to skip */
+  skip?: number;
+  /** Maximum number of records to return */
+  limit?: number;
+  /** Start time (ISO 8601) */
+  startTime?: ISOTimestamp;
+  /** End time (ISO 8601) */
+  endTime?: ISOTimestamp;
+  /** Filter by currency code */
+  currency?: CurrencyCode;
+}
+
+/**
  * Crypto deposit history item
  */
 export interface CryptoDepositHistoryItem {
@@ -71,37 +87,46 @@ export interface WhitelistedAddress {
  * Withdrawal configuration info
  */
 export interface WithdrawalConfigInfo {
+  /** Currency code */
+  currency: CurrencyCode;
+  /** Whether withdrawals are active */
+  isActive: boolean;
   /** Minimum withdrawal amount */
   minimumWithdrawAmount: string;
-  /** Maximum withdrawal amount */
-  maximumWithdrawAmount: string;
-  /** Withdrawal fee */
-  withdrawalFee: string;
-  /** Whether withdrawals are enabled */
-  withdrawalsEnabled: boolean;
-  /** Available networks for withdrawal */
-  networks?: Array<{
-    networkType: string;
-    minimumWithdrawAmount: string;
-    maximumWithdrawAmount: string;
-    withdrawalFee: string;
-  }>;
+  /** Network type */
+  networkType: string;
+  /** Whether payment reference is supported */
+  supportsPaymentReference: boolean;
+  /** Withdrawal cost/fee */
+  withdrawCost: string;
+  /** Withdrawal decimal places */
+  withdrawalDecimalPlaces: number;
 }
 
 /**
  * Crypto withdrawal request
  */
 export interface CryptoWithdrawalRequest {
-  /** Currency code */
+  /** Currency code (not in body, used in path) */
   currency: CurrencyCode;
-  /** Withdrawal amount */
-  amount: string;
   /** Destination address */
   address: string;
+  /** Withdrawal amount */
+  amount: string;
   /** Network type */
   networkType?: NetworkType;
   /** Payment reference/memo (optional) */
   paymentReference?: string;
+  /** Allow borrowing to fulfill withdrawal */
+  allowBorrow?: boolean;
+  /** Beneficiary name (Travel Rule requirement) */
+  beneficiaryName?: string;
+  /** Whether beneficiary is a corporate entity (Travel Rule) */
+  isCorporate?: boolean;
+  /** Whether address is self-hosted (Travel Rule) */
+  isSelfHosted?: boolean;
+  /** Service provider ID */
+  serviceProviderId?: string;
 }
 
 /**
@@ -110,14 +135,6 @@ export interface CryptoWithdrawalRequest {
 export interface CryptoWithdrawalResponse {
   /** Unique withdrawal ID */
   id: string;
-  /** Currency code */
-  currency: CurrencyCode;
-  /** Withdrawal amount */
-  amount: string;
-  /** Fee amount */
-  feeAmount: string;
-  /** When withdrawal was created */
-  createdAt: ISOTimestamp;
 }
 
 /**
@@ -154,10 +171,10 @@ export interface CryptoWithdrawalStatus {
  * Service provider information
  */
 export interface ServiceProvider {
+  /** Service provider ID */
+  id: string;
   /** Provider name */
   name: string;
-  /** Supported currencies */
-  supportedCurrencies: CurrencyCode[];
 }
 
 /**
@@ -168,6 +185,12 @@ export interface CryptoWithdrawalHistoryParams {
   skip?: number;
   /** Maximum number of records to return */
   limit?: number;
+  /** Filter by currency code */
+  currency?: CurrencyCode;
+  /** Start time (ISO 8601) */
+  startTime?: ISOTimestamp;
+  /** End time (ISO 8601) */
+  endTime?: ISOTimestamp;
 }
 
 /**
@@ -256,45 +279,26 @@ export interface LinkBankAccountRequest {
   branchCode: string;
   /** Account type */
   accountType: string;
+  /** Country code */
+  country: string;
 }
 
 /**
  * Fiat deposit reference
  */
 export interface FiatDepositReference {
-  /** Currency code */
-  currency: CurrencyCode;
   /** Reference code to use when depositing */
   reference: string;
-  /** Deposit instructions */
-  depositInstructions?: string;
 }
 
 /**
  * Auto-buy deposit reference
  */
 export interface AutoBuyDepositReference {
-  /** Fiat currency code */
-  currency: CurrencyCode;
-  /** Crypto currency to auto-buy */
-  buyCurrencySymbol: CurrencyCode;
   /** Reference code to use when depositing */
   reference: string;
-  /** Deposit instructions */
-  depositInstructions?: string;
 }
 
-/**
- * Supported auto-buy currency
- */
-export interface AutoBuyCurrency {
-  /** Currency code */
-  currencySymbol: CurrencyCode;
-  /** Currency name */
-  currencyName: string;
-  /** Whether auto-buy is enabled */
-  enabled: boolean;
-}
 
 /**
  * Fiat withdrawal request
@@ -308,6 +312,8 @@ export interface FiatWithdrawalRequest {
   linkedBankAccountId: string;
   /** Whether withdrawal is fast */
   fast?: boolean;
+  /** Allow borrowing to fulfill withdrawal */
+  allowBorrow?: boolean;
 }
 
 /**
@@ -316,10 +322,4 @@ export interface FiatWithdrawalRequest {
 export interface FiatWithdrawalResponse {
   /** Unique withdrawal ID */
   id: string;
-  /** Currency code */
-  currency: CurrencyCode;
-  /** Withdrawal amount */
-  amount: string;
-  /** When withdrawal was created */
-  createdAt: ISOTimestamp;
 }

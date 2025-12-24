@@ -136,6 +136,11 @@ async function walletExample() {
     console.log("USDC address(Ethereum)", usdcEthereum)
     console.log("ETH address(Ethereum)", ethEthereum)
     console.log("USDC address(Avalanche)", usdcAvalanche)
+    const ethDepositHistory = await client.wallets.getCryptoDepositHistory({
+        currency: "ETH",
+        limit: 1
+    })
+    console.log("ethDepositHistory", JSON.stringify(ethDepositHistory, null, 2))
 }
 
 // Run examples (comment out as needed)

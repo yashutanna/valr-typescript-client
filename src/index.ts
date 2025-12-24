@@ -48,8 +48,9 @@ export { RequestSigner } from './auth/RequestSigner';
 // Export constants
 export {
   API_BASE_URL,
-  WS_ACCOUNT_URL,
-  WS_TRADE_URL,
+  WS_BASE_URL,
+  WS_ACCOUNT_URL_PATH,
+  WS_TRADE_URL_PATH,
   RATE_LIMITS,
   HEADERS,
 } from './utils/constants';

@@ -1,5 +1,5 @@
 import { ValrWebSocketClient, WebSocketClientConfig, WebSocketEvents } from './ValrWebSocketClient';
-import { WS_ACCOUNT_URL } from '../utils/constants';
+import {WS_ACCOUNT_URL_PATH} from '../utils/constants';
 import type {
   WebSocketMessage,
   Subscription,
@@ -64,7 +64,7 @@ export class AccountWebSocket extends ValrWebSocketClient<AccountWebSocketEventM
     if (!config.apiKey || !config.apiSecret) {
       throw new Error('API key and secret are required for Account WebSocket');
     }
-    super(WS_ACCOUNT_URL, config);
+    super(WS_ACCOUNT_URL_PATH, config);
   }
 
   /**

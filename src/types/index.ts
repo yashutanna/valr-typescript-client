@@ -102,6 +102,7 @@ export type {
 // Wallets types
 export type {
   DepositAddress,
+  CryptoDepositHistoryParams,
   CryptoDepositHistoryItem,
   WhitelistedAddress,
   WithdrawalConfigInfo,
@@ -116,7 +117,6 @@ export type {
   LinkBankAccountRequest,
   FiatDepositReference,
   AutoBuyDepositReference,
-  AutoBuyCurrency,
   FiatWithdrawalRequest,
   FiatWithdrawalResponse,
 } from './wallets';

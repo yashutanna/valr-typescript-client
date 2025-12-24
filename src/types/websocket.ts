@@ -170,18 +170,62 @@ export interface OrderStatusUpdate extends BaseWebSocketMessage {
 }
 
 /**
- * Balance update (WebSocket)
+ * Currency info in balance update
  */
-export interface BalanceUpdate extends BaseWebSocketMessage {
-  type: 'BALANCE_UPDATE';
-  /** Currency */
-  currency: string;
+export interface BalanceCurrency {
+  /** Currency symbol */
+  symbol: string;
+  /** Decimal places */
+  decimalPlaces: number;
+  /** Whether currency is active */
+  isActive: boolean;
+  /** Short name */
+  shortName: string;
+  /** Long name */
+  longName: string;
+  /** Supported withdraw decimal places */
+  supportedWithdrawDecimalPlaces: number;
+  /** Whether currency can be used as collateral */
+  collateral: boolean;
+  /** Collateral weight */
+  collateralWeight: string;
+}
+
+/**
+ * Balance update data
+ */
+export interface BalanceUpdateData {
+  /** Currency info */
+  currency: BalanceCurrency;
   /** Available balance */
   available: string;
   /** Reserved balance */
   reserved: string;
   /** Total balance */
   total: string;
+  /** When balance was updated */
+  updatedAt: ISOTimestamp;
+  /** Lend reserved amount */
+  lendReserved: string;
+  /** Borrow collateral reserved */
+  borrowCollateralReserved: string;
+  /** Borrowed amount */
+  borrowedAmount: string;
+  /** Total in reference currency */
+  totalInReference: string;
+  /** Total in reference currency weighted */
+  totalInReferenceWeighted: string;
+  /** Reference currency */
+  referenceCurrency: string;
+}
+
+/**
+ * Balance update (WebSocket)
+ */
+export interface BalanceUpdate extends BaseWebSocketMessage {
+  type: 'BALANCE_UPDATE';
+  /** Balance data */
+  data: BalanceUpdateData;
 }
 
 /**
