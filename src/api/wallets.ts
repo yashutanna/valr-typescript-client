@@ -126,6 +126,7 @@ export class WalletsAPI {
    * Returns withdrawal limits and fees.
    *
    * @param currencyCode - Currency code
+   * @param networkType - Optional network type
    * @returns Promise resolving to withdrawal config info
    *
    * @example
@@ -134,9 +135,10 @@ export class WalletsAPI {
    * console.log('Fee:', config.withdrawalFee);
    * ```
    */
-  async getCryptoWithdrawalInfo(currencyCode: CurrencyCode): Promise<WithdrawalConfigInfo> {
+  async getCryptoWithdrawalInfo(currencyCode: CurrencyCode, networkType?: string): Promise<WithdrawalConfigInfo> {
     const response = await this.http.get<WithdrawalConfigInfo>(
-      `/v1/wallet/crypto/${currencyCode}/withdraw`
+      `/v1/wallet/crypto/${currencyCode}/withdraw`,
+        { params: networkType ? { networkType } : undefined }
     );
     return response.data;
   }
