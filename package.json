@@ -13,7 +13,11 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "CHECKSUMS.txt",
+    "scripts/verify-checksums.js",
+    "scripts/verify-checksums.sh",
+    "scripts/build-and-verify.sh"
   ],
   "scripts": {
     "build": "tsup",
@@ -23,7 +27,8 @@
     "test:coverage": "vitest run --coverage",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
-    "prepublishOnly": "npm run build && npm run test"
+    "prepublishOnly": "npm run build && npm run test",
+    "verify": "node scripts/verify-checksums.js"
   },
   "keywords": [
     "valr",

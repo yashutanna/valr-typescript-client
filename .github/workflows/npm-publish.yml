@@ -9,7 +9,7 @@ on:
 
 permissions:
   id-token: write # Required for OIDC
-  contents: read
+  contents: write # Required to commit checksums and attach to release
 
 jobs:
   build:
@@ -23,12 +23,63 @@ jobs:
       - run: npm test
 
   publish:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org' # Essential for OIDC
       - run: npm ci
+      - run: npm run build
+
+      # Generate checksums for verification
+      - name: Generate checksums
+        run: |
+          echo "# Package Checksums" > CHECKSUMS.txt
+          echo "" >> CHECKSUMS.txt
+          echo "Generated on: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> CHECKSUMS.txt
+          echo "Git commit: ${{ github.sha }}" >> CHECKSUMS.txt
+          echo "Version: $(node -p "require('./package.json').version")" >> CHECKSUMS.txt
+          echo "" >> CHECKSUMS.txt
+          echo "## Distribution Files (SHA256)" >> CHECKSUMS.txt
+          echo "" >> CHECKSUMS.txt
+          find dist -type f -exec sha256sum {} \; | sort >> CHECKSUMS.txt
+          echo "" >> CHECKSUMS.txt
+          echo "## Source Files (SHA256)" >> CHECKSUMS.txt
+          echo "" >> CHECKSUMS.txt
+          find src -type f -name "*.ts" -exec sha256sum {} \; | sort >> CHECKSUMS.txt
+
+          # Display checksums in workflow log
+          cat CHECKSUMS.txt
+
+      # Commit checksums back to repository
+      - name: Commit checksums to repository
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add CHECKSUMS.txt
+          git commit -m "chore: add checksums for v$(node -p "require('./package.json').version") [skip ci]"
+          git push
+
+      # Upload checksums as artifact (for convenience)
+      - name: Upload checksums artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksums
+          path: CHECKSUMS.txt
+          retention-days: 90
+
+      # Attach checksums to GitHub Release
+      - name: Upload checksums to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: CHECKSUMS.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - run: npm publish

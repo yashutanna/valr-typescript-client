@@ -242,6 +242,112 @@ VALR API uses HMAC SHA512 signatures for authentication. This client handles all
 - Regularly rotate your API keys
 - Delete unused API keys
 
+## Package Integrity & Verification
+
+This package includes cryptographic checksums to verify package integrity and protect against supply chain attacks.
+
+### Verifying Package Checksums
+
+After installing from npm or any registry, you can verify the package integrity:
+
+```bash
+# Using npm script (cross-platform)
+npm run verify
+
+# Or directly with Node.js
+node node_modules/valr-typescript-client/scripts/verify-checksums.js
+
+# Or on Unix systems with bash
+bash node_modules/valr-typescript-client/scripts/verify-checksums.sh
+```
+
+This will verify that:
+- **All `dist/` files** (the compiled JavaScript you actually execute) match the official build
+- The package hasn't been tampered with after publication
+- You're running the exact code from the GitHub release
+- Shows you the Git commit SHA of the source code it was built from
+
+**What you're verifying:** The compiled JavaScript files in `dist/` are what run when you use this package. The checksums prove these match the official build from GitHub Actions.
+
+### What Gets Verified
+
+The checksum verification checks:
+
+**Distribution files (`dist/`)** - **What actually executes:**
+- `dist/index.js`, `dist/index.mjs` - Compiled JavaScript (ESM/CJS)
+- `dist/index.d.ts`, `dist/index.d.mts` - TypeScript definitions
+- `dist/*.map` - Source maps
+
+**Source files (`src/`)** - For transparency:
+- Original TypeScript source code
+- Allows you to inspect what the dist was built from
+- Enables reproducible builds (advanced users)
+
+**Metadata:**
+- **Git commit SHA** - Links to exact source code on GitHub
+- **Build timestamp** - When the package was built
+- **Package version** - Version number
+
+**Security model:** Checksums prove your `dist/` files match the official GitHub Actions build. You can inspect the source code at the Git commit shown in the checksums.
+
+### Building from Source
+
+If you prefer to build from source yourself:
+
+```bash
+# Clone the repository
+git clone https://github.com/yashutanna/valr-typescript-client.git
+cd valr-typescript-client
+
+# Checkout a specific release
+git checkout v1.0.9
+
+# Install dependencies (use ci for reproducible builds)
+npm ci
+
+# Build
+npm run build
+
+# Run tests
+npm test
+```
+
+### Reproducible Builds (Advanced)
+
+For maximum trust, verify the official build was created from clean source code:
+
+```bash
+# Clone and checkout the release
+git clone https://github.com/yashutanna/valr-typescript-client.git
+cd valr-typescript-client
+git checkout v1.0.9
+
+# Build from source
+npm ci
+npm run build
+
+# Compare your build with official checksums
+bash scripts/build-and-verify.sh
+```
+
+This attempts to reproduce the official build and compares your locally-built `dist/` files with the checksums from the official release. Note that perfect reproducibility is challenging with JavaScript builds, but the script will show you any differences.
+
+### CI/CD Transparency
+
+Every package published to npm includes:
+- `CHECKSUMS.txt` - SHA256 hashes of all files
+- Git commit SHA that was built
+- Build timestamp
+- Verification scripts
+
+The checksums are available in multiple places:
+- **In the repository** - Committed with each release (permanent Git history)
+- **GitHub Releases** - Attached as an asset to every release
+- **npm package** - Included at `node_modules/valr-typescript-client/CHECKSUMS.txt`
+- **GitHub Actions** - Available as workflow artifacts
+
+To verify a specific release, check the Git tag or GitHub release assets.
+
 ## Error Handling
 
 The client throws typed errors for different failure scenarios:
