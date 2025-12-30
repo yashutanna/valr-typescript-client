@@ -175,8 +175,17 @@ export abstract class ValrWebSocketClient<TEvents extends WebSocketEvents = WebS
       // @ts-ignore - Base event is always available
       this.emit('authenticated');
       this.onAuthenticated();
+      this.startPing()
     }
   }
+
+  protected startPing(){
+      setInterval(() => {
+          if(this.isConnected && this.isAuthenticated){
+            this.send({ type: "PING"});
+          }
+      }, 30000)
+    }
 
   /**
    * Handle incoming WebSocket message

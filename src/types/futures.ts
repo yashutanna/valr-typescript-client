@@ -86,25 +86,6 @@ export interface FundingPayment {
   fundingTime: ISOTimestamp;
 }
 
-/**
- * Leverage information for a currency pair
- */
-export interface LeverageInfo {
-  /** Currency pair */
-  currencyPair: CurrencyPair;
-  /** Current leverage multiple */
-  leverageMultiple: number;
-  /** Maximum available leverage */
-  maxLeverageMultiple: number;
-}
-
-/**
- * Update leverage request
- */
-export interface UpdateLeverageRequest {
-  /** New leverage multiple (1-10) */
-  leverageMultiple: number;
-}
 
 /**
  * Futures position history params

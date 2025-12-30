@@ -127,17 +127,18 @@ export type {
   ClosedPositionSummary,
   ClosedPosition,
   FundingPayment,
-  LeverageInfo,
-  UpdateLeverageRequest,
   PositionHistoryParams,
   FundingHistoryParams,
 } from './futures';
 
 // Margin types
 export type {
-  MarginStatus,
+  MarginInfoV1,
+  MarginInfoV2,
+  AccountMarginStatus,
   EnableMarginRequest,
-  CurrencyLeverageSettings,
+  LeverageInfo,
+  UpdateLeverageRequest,
 } from './margin';
 
 // Loans types
