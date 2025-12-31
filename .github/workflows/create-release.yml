@@ -125,7 +125,12 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add CHECKSUMS.txt
           git commit -m "chore: add checksums for v$(node -p "require('./package.json').version") [skip ci]"
-          # Push to master branch (we're in detached HEAD from tag checkout)
+
+          # Fetch latest master and rebase our checksum commit on top
+          git fetch origin master:master
+          git rebase master
+
+          # Push to master branch
           git push origin HEAD:master
 
       # Upload checksums as artifact (for convenience)
