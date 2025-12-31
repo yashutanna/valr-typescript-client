@@ -1,17 +1,17 @@
 # Package Checksums
 
-Generated on: 2025-12-30 14:57:51 UTC
-Git commit: 3e9dd020502b07c1e87bb03cd1c06540efde3ebd
-Version: 1.0.10
+Generated on: 2025-12-31 11:09:04 UTC
+Git commit: 43ca9983ea9c111bcd7a8bf137a12a80e39e4f6a
+Version: 1.0.16
 
 ## Distribution Files (SHA256)
 
-06158769642deabfe17ffb66d8fd2b6d5153bba63e45201a5457d171d8c31497  dist/index.js
-26bfc380548882a1ea5da2b993de618c5566cfc4b6442d8bc67a9a7f25bb1ed7  dist/index.js.map
-69ce37acf0ed6a37333e46eb7e86499e4509eb7d3c2279993a05d1c1fd640cfd  dist/index.d.mts
-69ce37acf0ed6a37333e46eb7e86499e4509eb7d3c2279993a05d1c1fd640cfd  dist/index.d.ts
-9f55f3468cc5c0aa57580e7bbb95b5cae9f5e60982428e90a844aba79d0872af  dist/index.mjs
-c10a93a7b2361bef6672805183ab08595fc948e3bf205d7ca8b5052620f3e226  dist/index.mjs.map
+17891d810cf172f044786288fef7df62f461581455871dac961fd65435b2d204  dist/index.mjs.map
+3275588ac5ec719891a8c35c418d25db8492e953b364409b97fe079971c9e6c1  dist/index.mjs
+7e8d73467b1c57397945238dfcf370e7d7f1bd271a13eb9dd14f3612a9cf629f  dist/index.js
+a8d906a68147898ac01151fa1e7fb030c37e46c1103555fae85a9efcb566ec9f  dist/index.d.mts
+a8d906a68147898ac01151fa1e7fb030c37e46c1103555fae85a9efcb566ec9f  dist/index.d.ts
+bca7d628fed0512fc2bfcaab410eb93ab4671eaace7ef8ae6a81b2f223aed926  dist/index.js.map
 
 ## Source Files (SHA256)
 
@@ -28,7 +28,6 @@ c10a93a7b2361bef6672805183ab08595fc948e3bf205d7ca8b5052620f3e226  dist/index.mjs
 4202fe777fda3e43ff944971783116f17031d124395e4a44cb2bf2bec5ff246c  src/types/bundles.ts
 43ce3b42153a2e1a2d290ea893507c820e4461eb2162b1ccfa0d832118468618  src/api/margin.ts
 4abf3aa146557f6f33f039a03a675cb6588da94f29e885ef97458cb698699425  src/types/common.ts
-4b598e192fe1571f36138724f67d49f645d1b4c90cc527fe0e6901d5f950372c  src/auth/RequestSigner.ts
 5475e829a33f944dec5dd4079066aa621c76c7767ac56f172a322ce110d43f0b  src/types/pay.ts
 551aa287e635dad4d0209502a0410f09c169715a5bac95366a875038c3e50504  src/api/futures.ts
 5572db3151cd4db275a7ac6e8a8859e3c9048e0bd873a113f445139c0db2017c  src/api/bundles.ts
@@ -46,5 +45,6 @@ d8b3405cad342df23aeacaaacde277a4829028699a13bf0d129aea07beb23d68  src/api/tradin
 ec209b0ff8de8e662c2ea701feccee22b53e6ed684affb3eacd39e68c3aa725a  src/index.ts
 f67a6c69ed003a1606221e792de802592aedb7164cafb7d7d2eab4fac105807a  src/utils/constants.ts
 f819d431730bb51a23d2cad32cc6eee83dc9d917e5cb9efd3201ffeb64d76ec5  src/client/AccountWebSocket.ts
+fadae797586481848494b79e9924ecc1e6fabc19a154d822579ffa2065d395fd  src/auth/RequestSigner.ts
 fe3ced400781e287f691c1262b48ea5005d21b45f69172a8a03b470e14c63a6e  src/client/TradeWebSocket.ts
 fe8bec28add01e200bd95ad326a0511334671b3a82a3990d2ee521adca7a7a8e  src/types/wallets.ts
