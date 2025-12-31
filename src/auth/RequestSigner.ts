@@ -23,6 +23,7 @@ export interface SignRequestParams {
  * Implements HMAC SHA512 signature generation as per VALR API specification
  */
 export class RequestSigner {
+  static lastUsedTimeStamp: number = 0;
   /**
    * Generate HMAC SHA512 signature for VALR API request
    *
@@ -65,11 +66,20 @@ export class RequestSigner {
 
   /**
    * Get current timestamp in milliseconds
+   * Guarantees unique timestamps by waiting for the next millisecond if necessary
    *
-   * @returns Unix timestamp in milliseconds
+   * @returns Unix timestamp in milliseconds (guaranteed unique and monotonically increasing)
    */
   static getTimestamp(): number {
-    return Date.now();
+    let now = Date.now();
+
+    // Spin-lock: wait until we get a timestamp greater than the last used one
+    while (now <= this.lastUsedTimeStamp) {
+      now = Date.now();
+    }
+
+    this.lastUsedTimeStamp = now;
+    return now;
   }
 
   /**
