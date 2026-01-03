@@ -4,6 +4,10 @@ import type { CurrencyPair, CurrencyCode } from './common';
  * Margin information V1
  */
 export interface MarginInfoV1 {
+  /** Current margin fraction (account equity / account debt in reference) */
+  marginFraction: string;
+  /** Current margin fraction excluding available assets (collateralised only) */
+  collateralisedMarginFraction: string;
   /** Initial margin fraction */
   initialMarginFraction: string;
   /** Total borrowed in reference currency */
@@ -20,16 +24,28 @@ export interface MarginInfoV1 {
   maintenanceMarginFraction: string;
   /** Auto close margin fraction */
   autoCloseMarginFraction: string;
+  /** Debt-to-equity ratio (inverse of margin fraction) */
+  leverageMultiple: number;
   /** Total positions at entry in reference currency */
   totalPositionsAtEntryInReference: string;
   /** Total unrealised futures PnL in reference currency */
   totalUnrealisedFuturesPnlInReference: string;
+  /** Default initial margin fraction */
+  defaultInitialMarginFraction?: string;
+  /** Default maintenance margin fraction */
+  defaultMaintenanceMarginFraction?: string;
+  /** Default auto close margin fraction */
+  defaultAutoCloseMarginFraction?: string;
 }
 
 /**
  * Margin information V2
  */
 export interface MarginInfoV2 {
+  /** Current margin fraction (account equity / account positions at open value) */
+  marginFraction: string;
+  /** Current margin fraction excluding available assets (collateralised only) */
+  collateralisedMarginFraction: string;
   /** Initial margin fraction */
   initialMarginFraction: string;
   /** Total leveraged exposure in reference currency */
@@ -46,6 +62,8 @@ export interface MarginInfoV2 {
   maintenanceMarginFraction: string;
   /** Auto close margin fraction */
   autoCloseMarginFraction: string;
+  /** Debt-to-equity ratio (inverse of margin fraction) */
+  leverageMultiple: number;
   /** Total positions at entry in reference currency */
   totalPositionsAtEntryInReference: string;
   /** Total unrealised futures PnL in reference currency */
