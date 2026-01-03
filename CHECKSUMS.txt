@@ -1,22 +1,23 @@
 # Package Checksums
 
-Generated on: 2026-01-03 10:18:39 UTC
-Git commit: 8dcbf4a37dd0fe8555eedfe091d0c342ed07c4dc
-Version: 1.0.22
+Generated on: 2026-01-03 12:10:12 UTC
+Git commit: 4a1243ba185663cf730db8336adeb8e03acdc4b2
+Version: 1.0.23
 
 ## Distribution Files (SHA256)
 
 1ad7d8372ec293272faac50fb84b35965c3929b24d50a77423c722bc1ccef7fe  dist/index.mjs.map
+3437e326103c1e4152983f727b2181f719e935ec5e6ed478df199267dc5568db  dist/index.d.mts
+3437e326103c1e4152983f727b2181f719e935ec5e6ed478df199267dc5568db  dist/index.d.ts
 39577c8273f8a1ca6b66e44709bf7b6c381e1b1c31755ded1ef4bc252904449a  dist/index.js
 4864ea5b0f9f744caba9b4aeca007335a6c5149e73d060c9864345e19bc6da5b  dist/index.js.map
 488b2a9c9dc822a4253c0250c9f7c4a5c7547e8c805dda35e9b28a1f31587c06  dist/index.mjs
-4e70e0d9ae5ba14eeda706acb5c28eb1e770d914319ae2f48940f337b9aced59  dist/index.d.mts
-4e70e0d9ae5ba14eeda706acb5c28eb1e770d914319ae2f48940f337b9aced59  dist/index.d.ts
 
 ## Source Files (SHA256)
 
 05cf6e982fcbd24cebc6c1b4c6e366095859cdf503eb70f5faf4d9bb9844631a  src/client/ValrClient.ts
 0705454404aa0e0f2ce619615600d871c8052ac0afe495bb412219d9a6c032ac  src/types/public.ts
+07451545d78e896ab106b594151b4b9a3ae5ca4a2328914b2040a67cec403270  src/types/margin.ts
 0a9bed00d1ee34300d532c01c86a300d76f51b96d50aea2ebae15750c7c06d94  src/api/account.ts
 0b4530d458e0c3bbadb79566943ef466404215e545f25c4965c72d9bfeee86dc  src/api/health.ts
 13c4319ae883c96f779ea57f481c52f2298397e11950213f7d43a05290f42e8a  src/api/trading.ts
@@ -25,7 +26,6 @@ Version: 1.0.22
 392124cca58a1532bd57472ba574bc065052c552ea8f10b7c675c942310c67e8  src/api/wallets.ts
 39fd4908c74bcca8c4e74a3a4e16de4439dfca781a7644ca9383c5f5096744cf  src/types/futures.ts
 3e5ff90a945e12f321b0e7a5bdef82f95e0b04f6ba794eeed9d4887d80d50323  src/api/pay.ts
-3ff881e0a329681fecb0eae9ce178e9d1e6e4d6a6d55bfb5eec99a46c85d4e2a  src/types/margin.ts
 40f2245b2685e634bd0f531367561c1c26d174cc083c496c1f914e8c6a9f948a  src/client/ValrWebSocketClient.ts
 4202fe777fda3e43ff944971783116f17031d124395e4a44cb2bf2bec5ff246c  src/types/bundles.ts
 43ce3b42153a2e1a2d290ea893507c820e4461eb2162b1ccfa0d832118468618  src/api/margin.ts
