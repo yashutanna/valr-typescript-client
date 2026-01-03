@@ -38,6 +38,12 @@ export interface LimitOrderRequest extends BaseOrderRequest {
   postOnly?: PostOnly;
   /** Time in force */
   timeInForce?: TimeInForce;
+  /** Allow margin trading */
+  allowMargin?: string | boolean;
+  /** Enable post-only repricing */
+  postOnlyReprice?: boolean;
+  /** Number of ticks to reprice */
+  postOnlyRepriceTicks?: string;
 }
 
 /**
@@ -54,6 +60,12 @@ export interface LimitOrderRequestV2 extends BaseOrderRequest {
   postOnly?: PostOnly;
   /** Time in force */
   timeInForce?: TimeInForce;
+  /** Allow margin trading */
+  allowMargin?: string | boolean;
+  /** Enable post-only repricing */
+  postOnlyReprice?: boolean;
+  /** Number of ticks to reprice */
+  postOnlyRepriceTicks?: string;
 }
 
 /**
@@ -64,6 +76,8 @@ export interface MarketOrderRequest extends BaseOrderRequest {
   baseAmount?: string;
   /** Quote amount (optional, either baseAmount or quoteAmount required) */
   quoteAmount?: string;
+  /** Allow margin trading */
+  allowMargin?: string | boolean;
 }
 
 /**
@@ -77,6 +91,8 @@ export interface MarketOrderRequestV2 extends MarketOrderRequest {}
 export interface StopLimitOrderRequest extends LimitOrderRequest {
   /** Stop price that triggers the order */
   stopPrice: string;
+  /** Type of stop order */
+  type?: 'STOP_LOSS_LIMIT' | 'TAKE_PROFIT_LIMIT';
 }
 
 /**
@@ -85,6 +101,8 @@ export interface StopLimitOrderRequest extends LimitOrderRequest {
 export interface StopLimitOrderRequestV2 extends LimitOrderRequestV2 {
   /** Stop price that triggers the order */
   stopPrice: string;
+  /** Type of stop order */
+  type?: 'STOP_LOSS_LIMIT' | 'TAKE_PROFIT_LIMIT';
 }
 
 /**
@@ -150,11 +168,44 @@ export interface OrderResponse {
 }
 
 /**
+ * Batch order operation types
+ */
+export type BatchOrderOperationType =
+  | 'PLACE_LIMIT'
+  | 'PLACE_MARKET'
+  | 'PLACE_STOP_LIMIT'
+  | 'CANCEL_ORDER';
+
+/**
+ * Individual batch order operation
+ */
+export type BatchOrderOperation =
+  | {
+      type: 'PLACE_LIMIT';
+      data: LimitOrderRequest;
+    }
+  | {
+      type: 'PLACE_MARKET';
+      data: MarketOrderRequest;
+    }
+  | {
+      type: 'PLACE_STOP_LIMIT';
+      data: StopLimitOrderRequest;
+    }
+  | {
+      type: 'CANCEL_ORDER';
+      data: {
+        orderId: OrderId;
+        pair: CurrencyPair;
+      };
+    };
+
+/**
  * Batch order request
  */
 export interface BatchOrderRequest {
-  /** List of order requests */
-  requests: (LimitOrderRequest | MarketOrderRequest)[];
+  /** List of batch order operations (max 10) */
+  requests: BatchOrderOperation[];
 }
 
 /**
@@ -281,25 +332,23 @@ export interface OpenOrder {
 }
 
 /**
- * Conditional order request
+ * Conditional order request (for futures TPSL orders)
  */
 export interface ConditionalOrderRequest {
-  /** Currency pair */
+  /** Currency pair (perpetual futures contract, e.g., BTCUSDTPERP) */
   pair: CurrencyPair;
-  /** Order side */
-  side: OrderSide;
-  /** Conditional order type */
-  type: ConditionalOrderType;
-  /** Trigger price */
-  triggerPrice: string;
-  /** Trigger type */
-  triggerType?: ConditionalOrderTriggerType;
-  /** Quantity */
+  /** Quantity (0 = close entire position, -1 = close only added quantity, >0 = reduce-only) */
   quantity: string;
-  /** Limit price (for limit orders) */
-  price?: string;
-  /** Time in force */
-  timeInForce?: TimeInForce;
+  /** Trigger type (LAST_TRADED or MARK_PRICE) */
+  triggerType: ConditionalOrderTriggerType;
+  /** Take profit trigger price (required for TP, optional for OCO) */
+  takeProfitTriggerPrice?: string;
+  /** Take profit order price (required for TP, optional for OCO, -1 for market) */
+  takeProfitOrderPrice?: string;
+  /** Stop loss trigger price (required for SL, optional for OCO) */
+  stopLossTriggerPrice?: string;
+  /** Stop loss order price (required for SL, optional for OCO, -1 for market) */
+  stopLossOrderPrice?: string;
   /** Customer order ID */
   customerOrderId?: CustomerOrderId;
 }
@@ -312,6 +361,26 @@ export interface ConditionalOrderResponse {
   id: string;
   /** Customer order ID if provided */
   customerOrderId?: CustomerOrderId;
+}
+
+/**
+ * Modify conditional order request
+ */
+export interface ModifyConditionalOrderRequest {
+  /** Customer order ID to identify which order to modify */
+  customerOrderId: CustomerOrderId;
+  /** Currency pair */
+  pair: CurrencyPair;
+  /** New quantity */
+  newQuantity?: string;
+  /** New take profit trigger price */
+  newTakeProfitTriggerPrice?: string;
+  /** New take profit order price */
+  newTakeProfitOrderPrice?: string;
+  /** New stop loss trigger price */
+  newStopLossTriggerPrice?: string;
+  /** New stop loss order price */
+  newStopLossOrderPrice?: string;
 }
 
 /**
@@ -409,6 +478,10 @@ export interface OrderHistoryParams extends PaginationParams {
   startTime?: ISOTimestamp;
   /** End time filter */
   endTime?: ISOTimestamp;
+  /** Exclude failed orders */
+  excludeFailures?: boolean | 'TRUE' | 'FALSE';
+  /** Include zero-volume cancelled orders */
+  showZeroVolumeCancels?: boolean | 'TRUE' | 'FALSE';
 }
 
 /**

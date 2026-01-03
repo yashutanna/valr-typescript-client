@@ -17,6 +17,7 @@ import type {
   ConditionalOrderRequest,
   ConditionalOrderResponse,
   ConditionalOrderStatus,
+  ModifyConditionalOrderRequest,
   ModifyOrderRequest,
   ModifyOrderRequestV2,
   CancelOrderRequest,
@@ -186,7 +187,7 @@ export class TradingAPI {
    * @param request - Conditional order modification request
    * @returns Updated conditional order
    */
-  async modifyConditionalOrder(request: ConditionalOrderRequest & { id: string }): Promise<ConditionalOrderResponse> {
+  async modifyConditionalOrder(request: ModifyConditionalOrderRequest): Promise<ConditionalOrderResponse> {
     const response = await this.http.put<ConditionalOrderResponse>('/v1/orders/conditionals/modify', request);
     return response.data;
   }
