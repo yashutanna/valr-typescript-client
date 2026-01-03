@@ -2,9 +2,35 @@
 
 This document describes how to create a new release of the `valr-typescript-client` package.
 
-## Automated Release Workflow
+## Quick Release (Recommended)
 
-The release process is fully automated via GitHub Actions:
+Use the automated release script that handles everything:
+
+```bash
+# Patch version (1.0.21 → 1.0.22)
+npm run release patch
+
+# Minor version (1.0.21 → 1.1.0)
+npm run release minor
+
+# Major version (1.0.21 → 2.0.0)
+npm run release major
+```
+
+The script will:
+1. ✅ Check you're on the master branch
+2. ✅ Check for uncommitted changes
+3. ✅ Pull latest changes from origin
+4. ✅ Run tests to ensure code quality
+5. ✅ Run build to verify compilation
+6. ✅ Show version change and ask for confirmation
+7. ✅ Bump version and create git tag
+8. ✅ Push to GitHub with tags
+9. ✅ Trigger automated GitHub Actions workflow
+
+## Manual Release (Alternative)
+
+If you prefer to do it manually or the script isn't available:
 
 ### 1. Create a new version locally
 

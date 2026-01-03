@@ -28,7 +28,8 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
     "prepublishOnly": "npm run build && npm run test",
-    "verify": "node scripts/verify-checksums.js"
+    "verify": "node scripts/verify-checksums.js",
+    "release": "bash scripts/release.sh"
   },
   "keywords": [
     "valr",

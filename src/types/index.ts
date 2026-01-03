@@ -175,8 +175,17 @@ export type {
 // Pay types
 export type {
   CreatePaymentRequest,
-  Payment,
+  PaymentResponse,
+  PaymentStatusType,
+  PaymentDirection,
+  PaymentTransactionType,
   PaymentStatus,
+  PaymentDetails,
+  PaymentHistoryItem,
+  PaymentLimits,
+  PayIdResponse,
+  ReversePaymentRequest,
+  PartialReversePaymentRequest,
 } from './pay';
 
 // Bundles types
