@@ -1,8 +1,8 @@
 # Package Checksums
 
-Generated on: 2025-12-31 11:16:32 UTC
-Git commit: 29da1b68bb617ac6a800bddd702f0ac73e8522cd
-Version: 1.0.17
+Generated on: 2025-12-31 11:27:01 UTC
+Git commit: e3c78e48f16b4f6a98d011dca29d644202af2d37
+Version: 1.0.19
 
 ## Distribution Files (SHA256)
 
