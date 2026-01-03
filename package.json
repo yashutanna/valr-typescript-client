@@ -1,6 +1,6 @@
 {
   "name": "valr-typescript-client",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "TypeScript client for the VALR cryptocurrency exchange API with full type safety, WebSocket support, and comprehensive endpoint coverage",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
