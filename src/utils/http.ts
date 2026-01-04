@@ -57,7 +57,7 @@ export class HttpClient {
           if (status === 400) {
             throw new ValrValidationError(
               data?.message || 'Validation failed',
-              data?.errors
+              data?.errors || data?.validationErrors?.errors
             );
           }
 

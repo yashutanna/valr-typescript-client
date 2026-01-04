@@ -208,11 +208,13 @@ export interface CreateSubaccountRequest {
  */
 export interface TransferRequest {
   /** Currency to transfer */
-  currency: CurrencyCode;
+  currencyCode: CurrencyCode;
   /** Amount to transfer */
   amount: string;
   /** Source subaccount ID (undefined for primary account) */
   fromId?: SubaccountId;
   /** Destination subaccount ID (undefined for primary account) */
   toId?: SubaccountId;
+  /** Borrow on margin for transfer */
+  allowBorrow?: boolean;
 }

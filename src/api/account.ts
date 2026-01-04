@@ -124,7 +124,7 @@ export class AccountAPI {
    * @returns Transfer confirmation
    */
   async transferBetweenAccounts(request: TransferRequest): Promise<{ success: boolean }> {
-    const response = await this.http.post<{ success: boolean }>('/v1/account/subaccount/transfer', request);
+    const response = await this.http.post<{ success: boolean }>('/v1/account/subaccounts/transfer', request);
     return response.data;
   }
 

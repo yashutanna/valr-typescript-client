@@ -130,8 +130,31 @@ async function subaccountStakingExample() {
   });
 }
 
+/**
+ * Example: Transfering funds from a Subaccount
+ */
+async function transferBetweenSubaccountsExample() {
+    const subAccount1Client = new ValrClient({
+        apiKey: process.env.VALR_API_KEY!,
+        apiSecret: process.env.VALR_API_SECRET!,
+    });
+
+    console.log('\n=== Subaccount Transfer example ===\n');
+
+    const sendFundsResult = await subAccount1Client.account.transferBetweenAccounts({
+        amount: "1",
+        //@ts-ignore
+        currencyCode: "ZAR",
+        toId: process.env.DESTINATION_SUBACCOUNT,
+        fromId: process.env.SOURCE_SUBACCOUNT,
+        allowBorrow: false
+    })
+    console.log({ sendFundsResult })
+}
+
 // Run examples
 // Choose based on your setup:
-subaccountKeyExample().catch(console.error); // If you have a subaccount API key
+// subaccountKeyExample().catch(console.error); // If you have a subaccount API key
+transferBetweenSubaccountsExample().catch(console.error);
 // subaccountImpersonationExample().catch(console.error); // If you have a primary key + want to impersonate
 // subaccountStakingExample().catch(console.error);
