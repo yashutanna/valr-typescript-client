@@ -26,7 +26,6 @@ export type {
   ISOTimestamp,
   ConditionalOrderTriggerType,
   ConditionalOrderType,
-  BatchOrderStatus,
 } from './common';
 
 // Public API types
@@ -70,6 +69,7 @@ export type {
 // Trading types
 export type {
   BaseOrderRequest,
+  InlineConditionalOrderData,
   LimitOrderRequest,
   LimitOrderRequestV2,
   MarketOrderRequest,
@@ -82,7 +82,12 @@ export type {
   OrderResponse,
   BatchOrderOperationType,
   BatchOrderOperation,
+  BatchCancelOrderData,
+  BatchModifyOrderData,
+  ModifyMatchStrategy,
+  ModifyMatchStrategyV2,
   BatchOrderRequest,
+  BatchOrderError,
   BatchOrderResponseItem,
   BatchOrderResponse,
   OrderStatusSummary,

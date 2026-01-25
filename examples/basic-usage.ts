@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Example 1: Public API usage (no authentication required)
-async function publicAPIExample() {
+export async function publicAPIExample() {
   const client = new ValrClient();
 
   // Get server time
@@ -25,7 +25,7 @@ async function publicAPIExample() {
 }
 
 // Example 2: Authenticated API usage
-async function authenticatedAPIExample() {
+export async function authenticatedAPIExample() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -46,7 +46,7 @@ async function authenticatedAPIExample() {
 }
 
 // Example 3: Trading
-async function tradingExample() {
+export async function tradingExample() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -58,7 +58,7 @@ async function tradingExample() {
     side: 'BUY',
     quantity: '0.001',
     price: '500000',
-    postOnly: 'POST_ONLY_REPRICE',
+    postOnly: true,
     customerOrderId: `order-${Date.now()}`,
   });
 
@@ -77,7 +77,7 @@ async function tradingExample() {
 }
 
 // Example 4: Futures trading
-async function futuresExample() {
+export async function futuresExample() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -94,7 +94,7 @@ async function futuresExample() {
 
 
 // Example 4: Earn Products
-async function earnExample() {
+export async function earnExample() {
     const client = new ValrClient({
         apiKey: process.env.VALR_API_KEY!,
         apiSecret: process.env.VALR_API_SECRET!,

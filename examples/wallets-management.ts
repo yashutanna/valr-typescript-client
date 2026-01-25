@@ -45,7 +45,7 @@ async function manageCryptoDeposits() {
 /**
  * Example 2: Withdraw cryptocurrency
  */
-async function withdrawCrypto() {
+export async function withdrawCrypto() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -69,12 +69,9 @@ async function withdrawCrypto() {
     console.log(`  To Address: ${withdrawalRequest.address}`);
 
     // Uncomment to actually execute:
-    // const withdrawal = await client.wallets.withdrawCrypto(withdrawalRequest);
-    // console.log(`\n✓ Withdrawal initiated:`);
-    // console.log(`  Withdrawal ID: ${withdrawal.id}`);
-    // console.log(`  Status: ${withdrawal.status}`);
-    // console.log(`  Amount: ${withdrawal.amount}`);
-    // console.log(`  Fee: ${withdrawal.fee}`);
+    const withdrawal = await client.wallets.withdrawCrypto(withdrawalRequest);
+    console.log(`\n✓ Withdrawal initiated:`);
+    console.log(`  Withdrawal ID: ${withdrawal.id}`);
 
     console.log('\n⚠️  Important security notes:');
     console.log('  - Always double-check the destination address');
@@ -89,7 +86,7 @@ async function withdrawCrypto() {
 /**
  * Example 3: Check withdrawal status
  */
-async function checkWithdrawalStatus() {
+export async function checkWithdrawalStatus() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -103,21 +100,20 @@ async function checkWithdrawalStatus() {
 
     console.log(`Checking status for withdrawal: ${withdrawalId}\n`);
 
-    // Uncomment to check actual withdrawal:
-    // const status = await client.wallets.getCryptoWithdrawalStatus(currency, withdrawalId);
-    // console.log('Withdrawal Status:');
-    // console.log(`  ID: ${status.id}`);
-    // console.log(`  Currency: ${status.currency}`);
-    // console.log(`  Amount: ${status.amount}`);
-    // console.log(`  Fee: ${status.fee}`);
-    // console.log(`  Status: ${status.status}`);
-    // console.log(`  Address: ${status.address}`);
-    // if (status.transactionHash) {
-    //   console.log(`  TX Hash: ${status.transactionHash}`);
-    // }
-    // if (status.confirmations) {
-    //   console.log(`  Confirmations: ${status.confirmations}`);
-    // }
+    const status = await client.wallets.getCryptoWithdrawalStatus(currency, withdrawalId);
+    console.log('Withdrawal Status:');
+    console.log(`  ID: ${status.uniqueId}`);
+    console.log(`  Currency: ${status.currency}`);
+    console.log(`  Amount: ${status.amount}`);
+    console.log(`  Fee: ${status.feeAmount}`);
+    console.log(`  Status: ${status.status}`);
+    console.log(`  Address: ${status.address}`);
+    if (status.transactionHash) {
+      console.log(`  TX Hash: ${status.transactionHash}`);
+    }
+    if (status.confirmations) {
+      console.log(`  Confirmations: ${status.confirmations}`);
+    }
 
     console.log('Status values:');
     console.log('  PENDING - Withdrawal is being processed');
@@ -133,7 +129,7 @@ async function checkWithdrawalStatus() {
 /**
  * Example 4: Manage fiat bank accounts
  */
-async function manageBankAccounts() {
+export async function manageBankAccounts() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -154,7 +150,6 @@ async function manageBankAccounts() {
         console.log(`  Bank: ${account.bank}`);
         console.log(`  Holder: ${account.accountHolder}`);
         console.log(`  Number: ${account.accountNumber}`);
-        console.log(`  Verified: ${account.verified ? 'Yes' : 'No'}`);
         console.log('');
       });
     }
@@ -176,52 +171,9 @@ async function manageBankAccounts() {
 }
 
 /**
- * Example 5: Fiat deposits and withdrawals
+ * Example 5: Check balances before withdrawing
  */
-async function manageFiatTransfers() {
-  const client = new ValrClient({
-    apiKey: process.env.VALR_API_KEY!,
-    apiSecret: process.env.VALR_API_SECRET!,
-  });
-
-  try {
-    console.log('=== Fiat Deposits and Withdrawals ===\n');
-
-    // Get deposit reference
-    const depositInfo = await client.wallets.getFiatDepositReference('ZAR');
-    console.log('To deposit ZAR to your VALR account:');
-    console.log(`  Bank: ${depositInfo.bankAccountDetails.bank}`);
-    console.log(`  Account Holder: ${depositInfo.bankAccountDetails.accountHolder}`);
-    console.log(`  Account Number: ${depositInfo.bankAccountDetails.accountNumber}`);
-    if (depositInfo.bankAccountDetails.branchCode) {
-      console.log(`  Branch Code: ${depositInfo.bankAccountDetails.branchCode}`);
-    }
-    console.log(`\n  ⚠️  IMPORTANT - Use this reference: ${depositInfo.paymentReference}`);
-    console.log('  This unique reference links the deposit to your account\n');
-
-    // Withdraw fiat (example - commented out for safety)
-    console.log('To withdraw ZAR:');
-    console.log('```typescript');
-    console.log('const withdrawal = await client.wallets.withdrawFiat({');
-    console.log('  currency: "ZAR",');
-    console.log('  amount: "1000",');
-    console.log('  beneficiaryId: "your-bank-account-id", // From linked accounts');
-    console.log('  fast: false // Set to true for instant EFT (may have higher fees)');
-    console.log('});');
-    console.log('```');
-
-    console.log('\n⚠️  Withdrawal timing:');
-    console.log('  - Standard: 1-2 business days');
-    console.log('  - Fast (instant): Usually within minutes (higher fees)');
-  } catch (error: any) {
-    console.error('Error:', error.message);
-  }
-}
-
-/**
- * Example 6: Check balances before withdrawing
- */
-async function checkBalancesBeforeWithdrawal() {
+export async function checkBalancesBeforeWithdrawal() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,

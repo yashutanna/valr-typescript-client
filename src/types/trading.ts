@@ -11,7 +11,6 @@ import type {
   PaginationParams,
   ConditionalOrderTriggerType,
   ConditionalOrderType,
-  BatchOrderStatus,
 } from './common';
 
 /**
@@ -23,6 +22,26 @@ export interface BaseOrderRequest {
   /** Order side (BUY or SELL) */
   side: OrderSide;
   /** Optional customer order ID (max 50 chars, alphanumeric + underscore/hyphen) */
+  customerOrderId?: CustomerOrderId;
+}
+
+/**
+ * Conditional order data for attaching TP/SL to limit/market orders (futures only)
+ */
+export interface InlineConditionalOrderData {
+  /** Quantity (0 = close entire position, -1 = close only added quantity, >0 = reduce-only) */
+  quantity: string;
+  /** Trigger type (LAST_TRADED or MARK_PRICE) */
+  triggerType: ConditionalOrderTriggerType;
+  /** Take profit trigger price */
+  takeProfitTriggerPrice?: string;
+  /** Take profit order price (-1 for market order) */
+  takeProfitOrderPrice?: string;
+  /** Stop loss trigger price */
+  stopLossTriggerPrice?: string;
+  /** Stop loss order price (-1 for market order) */
+  stopLossOrderPrice?: string;
+  /** Customer order ID for the conditional order */
   customerOrderId?: CustomerOrderId;
 }
 
@@ -44,29 +63,16 @@ export interface LimitOrderRequest extends BaseOrderRequest {
   postOnlyReprice?: boolean;
   /** Number of ticks to reprice */
   postOnlyRepriceTicks?: string;
+  /** Reduce-only order for futures (only reduces position, never increases) */
+  reduceOnly?: string | boolean;
+  /** Conditional order data for attaching TP/SL (futures only) */
+  conditionalOrderData?: InlineConditionalOrderData;
 }
 
 /**
- * Limit order request (v2)
+ * Limit order request (v2) - same as v1, uses quantity not baseAmount/quoteAmount
  */
-export interface LimitOrderRequestV2 extends BaseOrderRequest {
-  /** Quantity in base currency */
-  baseAmount?: string;
-  /** Quantity in quote currency */
-  quoteAmount?: string;
-  /** Price per unit */
-  price: string;
-  /** Post-only behavior */
-  postOnly?: PostOnly;
-  /** Time in force */
-  timeInForce?: TimeInForce;
-  /** Allow margin trading */
-  allowMargin?: string | boolean;
-  /** Enable post-only repricing */
-  postOnlyReprice?: boolean;
-  /** Number of ticks to reprice */
-  postOnlyRepriceTicks?: string;
-}
+export interface LimitOrderRequestV2 extends LimitOrderRequest {}
 
 /**
  * Market order request (v1)
@@ -78,6 +84,10 @@ export interface MarketOrderRequest extends BaseOrderRequest {
   quoteAmount?: string;
   /** Allow margin trading */
   allowMargin?: string | boolean;
+  /** Reduce-only order for futures (only reduces position, never increases) */
+  reduceOnly?: string | boolean;
+  /** Conditional order data for attaching TP/SL (futures only) */
+  conditionalOrderData?: InlineConditionalOrderData;
 }
 
 /**
@@ -174,7 +184,48 @@ export type BatchOrderOperationType =
   | 'PLACE_LIMIT'
   | 'PLACE_MARKET'
   | 'PLACE_STOP_LIMIT'
-  | 'CANCEL_ORDER';
+  | 'CANCEL_ORDER'
+  | 'MODIFY_ORDER';
+
+/**
+ * Modify match strategy for modify orders
+ * - RETAIN_ORIGINAL: Keep the original order if modification fails
+ * - CANCEL_ORIGINAL: Cancel the original order if modification fails
+ * - REPRICE: Adjust price to 1 tick below best ask (buy) or above best bid (sell) if would match (V1 only)
+ */
+export type ModifyMatchStrategy = 'RETAIN_ORIGINAL' | 'CANCEL_ORIGINAL' | 'REPRICE';
+
+/**
+ * Batch modify order data
+ */
+export interface BatchModifyOrderData {
+  /** Order ID to modify (required) */
+  orderId: OrderId;
+  /** Currency pair (required) */
+  pair: CurrencyPair;
+  /** Strategy when modification fails (required) */
+  modifyMatchStrategy: ModifyMatchStrategy;
+  /** New remaining quantity (optional, cannot be used with newTotalQuantity) */
+  newRemainingQuantity?: string;
+  /** New total quantity (optional, cannot be used with newRemainingQuantity) */
+  newTotalQuantity?: string;
+  /** New price (optional) */
+  newPrice?: string;
+  /** Customer order ID (optional) */
+  customerOrderId?: CustomerOrderId;
+}
+
+/**
+ * Cancel order data for batch operations
+ */
+export interface BatchCancelOrderData {
+  /** Order ID to cancel (use either orderId or customerOrderId, not both) */
+  orderId?: OrderId;
+  /** Customer order ID to cancel (use either orderId or customerOrderId, not both) */
+  customerOrderId?: CustomerOrderId;
+  /** Currency pair (required) */
+  pair: CurrencyPair;
+}
 
 /**
  * Individual batch order operation
@@ -194,10 +245,11 @@ export type BatchOrderOperation =
     }
   | {
       type: 'CANCEL_ORDER';
-      data: {
-        orderId: OrderId;
-        pair: CurrencyPair;
-      };
+      data: BatchCancelOrderData;
+    }
+  | {
+      type: 'MODIFY_ORDER';
+      data: BatchModifyOrderData;
     };
 
 /**
@@ -209,23 +261,40 @@ export interface BatchOrderRequest {
 }
 
 /**
- * Batch order response item
+ * Batch order error
+ */
+export interface BatchOrderError {
+  /** Error code */
+  code: number;
+  /** Error message */
+  message: string;
+}
+
+/**
+ * Batch order response item (outcome)
  */
 export interface BatchOrderResponseItem {
   /** Whether order was accepted */
-  status: BatchOrderStatus;
+  accepted: boolean;
   /** Order ID if accepted */
-  id?: OrderId;
+  orderId?: OrderId;
   /** Customer order ID if provided */
   customerOrderId?: CustomerOrderId;
-  /** Error message if failed */
-  message?: string;
+  /** Request type that was processed */
+  requestType?: BatchOrderOperationType;
+  /** Error details if failed */
+  error?: BatchOrderError;
 }
 
 /**
  * Batch order response
  */
-export type BatchOrderResponse = BatchOrderResponseItem[];
+export interface BatchOrderResponse {
+  /** Array of outcomes for each order in the batch */
+  outcomes: BatchOrderResponseItem[];
+  /** Batch ID */
+  batchId: number;
+}
 
 /**
  * Order status summary
@@ -416,37 +485,48 @@ export interface ConditionalOrderStatus {
 }
 
 /**
- * Modify order request
+ * Modify match strategy for V2 (excludes REPRICE)
+ */
+export type ModifyMatchStrategyV2 = 'RETAIN_ORIGINAL' | 'CANCEL_ORIGINAL';
+
+/**
+ * Modify order request (v1)
  */
 export interface ModifyOrderRequest {
-  /** Order ID or customer order ID */
-  orderId?: OrderId;
-  /** Customer order ID */
-  customerOrderId?: CustomerOrderId;
-  /** Currency pair */
+  /** Order ID (required) */
+  orderId: OrderId;
+  /** Currency pair (required) */
   pair: CurrencyPair;
-  /** New quantity (optional) */
-  quantity?: string;
+  /** Strategy when modification fails (required) - V1 supports REPRICE */
+  modifyMatchStrategy: ModifyMatchStrategy;
+  /** New remaining quantity (optional, cannot use with newTotalQuantity) */
+  newRemainingQuantity?: string;
+  /** New total quantity (optional, cannot use with newRemainingQuantity) */
+  newTotalQuantity?: string;
   /** New price (optional) */
-  price?: string;
+  newPrice?: string;
+  /** Customer order ID (optional) */
+  customerOrderId?: CustomerOrderId;
 }
 
 /**
- * Modify order request (v2)
+ * Modify order request (v2) - same fields but no REPRICE option for modifyMatchStrategy
  */
 export interface ModifyOrderRequestV2 {
-  /** Order ID or customer order ID */
-  orderId?: OrderId;
-  /** Customer order ID */
-  customerOrderId?: CustomerOrderId;
-  /** Currency pair */
+  /** Order ID (required) */
+  orderId: OrderId;
+  /** Currency pair (required) */
   pair: CurrencyPair;
-  /** New base amount (optional) */
-  baseAmount?: string;
-  /** New quote amount (optional) */
-  quoteAmount?: string;
+  /** Strategy when modification fails (required) - V2 does not support REPRICE */
+  modifyMatchStrategy: ModifyMatchStrategyV2;
+  /** New remaining quantity (optional, cannot use with newTotalQuantity) */
+  newRemainingQuantity?: string;
+  /** New total quantity (optional, cannot use with newTotalQuantity) */
+  newTotalQuantity?: string;
   /** New price (optional) */
-  price?: string;
+  newPrice?: string;
+  /** Customer order ID (optional) */
+  customerOrderId?: CustomerOrderId;
 }
 
 /**

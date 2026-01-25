@@ -3,7 +3,7 @@ import { ValrClient } from '../src';
 /**
  * Example 1: Advanced order placement with error handling
  */
-async function advancedOrderPlacement() {
+export async function advancedOrderPlacement() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -27,7 +27,9 @@ async function advancedOrderPlacement() {
       side: 'BUY',
       quantity: '0.001',
       price: buyPrice,
-      postOnly: 'POST_ONLY_REPRICE',
+      postOnly: true,
+      postOnlyReprice: true, // Reprice if order would match immediately
+      postOnlyRepriceTicks: '1', // Reprice by 1 tick
       timeInForce: 'GTC',
       customerOrderId: `adv-order-${Date.now()}`,
     });
@@ -60,7 +62,7 @@ async function advancedOrderPlacement() {
 /**
  * Example 2: Batch order placement
  */
-async function batchOrderExample() {
+export async function batchOrderExample() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -80,33 +82,43 @@ async function batchOrderExample() {
     console.log(`ETH: ${ethPrice} ZAR`);
 
     // Place multiple orders in one request
+    // Each batch operation requires a 'type' and 'data' wrapper
     const batchResult = await client.trading.placeBatchOrders({
       requests: [
         {
-          pair: 'BTCZAR',
-          side: 'BUY',
-          quantity: '0.001',
-          price: (btcPrice * 0.95).toFixed(0),
-          postOnly: 'POST_ONLY_REPRICE',
-          customerOrderId: `batch-btc-${Date.now()}`,
+          type: 'PLACE_LIMIT',
+          data: {
+            pair: 'BTCZAR',
+            side: 'BUY',
+            quantity: '0.001',
+            price: (btcPrice * 0.95).toFixed(0),
+            postOnly: true,
+            customerOrderId: `batch-btc-${Date.now()}`,
+          },
         },
         {
-          pair: 'ETHZAR',
-          side: 'BUY',
-          quantity: '0.01',
-          price: (ethPrice * 0.95).toFixed(0),
-          postOnly: 'POST_ONLY_REPRICE',
-          customerOrderId: `batch-eth-${Date.now()}`,
+          type: 'PLACE_LIMIT',
+          data: {
+            pair: 'ETHZAR',
+            side: 'BUY',
+            quantity: '0.01',
+            price: (ethPrice * 0.95).toFixed(0),
+            postOnly: true,
+            customerOrderId: `batch-eth-${Date.now()}`,
+          },
         },
       ],
     });
 
     console.log(`\nBatch Order Results:`);
-    batchResult.forEach((result, index) => {
-      console.log(`\nOrder ${index + 1}:`);
-      console.log(`  Status: ${result.status}`);
-      console.log(`  Order ID: ${result.id || 'N/A'}`);
-      console.log(`  Message: ${result.message || 'Success'}`);
+    batchResult.outcomes.forEach((result) => {
+      if(result.accepted){
+        console.log(`  Order ID: ${result.orderId}`);
+        console.log(`  Customer Order Id: ${result.customerOrderId}`);
+      } else {
+        console.log(`  Order ID: ${result.orderId}`);
+        console.log(`  error: ${result.error?.message}`);
+      }
     });
 
     // Cancel all orders after 10 seconds
@@ -121,66 +133,80 @@ async function batchOrderExample() {
 }
 
 /**
- * Example 3: Conditional orders (Stop-loss and Take-profit)
+ * Example 3: Stop-Limit Orders (Stop-loss and Take-profit for spot trading)
  */
-async function conditionalOrdersExample() {
+export async function stopLimitOrdersExample() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
   });
 
   try {
-    console.log('=== Conditional Orders Example ===\n');
+    console.log('=== Stop-Limit Orders Example ===\n');
 
-    // First, place a regular buy order
+    // Get current market price
     const market = await client.public.getMarketSummaryForPair('BTCZAR');
     const currentPrice = parseFloat(market.lastTradedPrice);
 
     console.log(`Current BTC price: ${currentPrice} ZAR`);
 
-    // Assume we have a position, set stop-loss and take-profit
-    const stopLossPrice = (currentPrice * 0.95).toFixed(0); // 5% below
-    const takeProfitPrice = (currentPrice * 1.10).toFixed(0); // 10% above
+    // Assume we have a BTC position - set stop-loss and take-profit
+    const stopLossStopPrice = (currentPrice * 0.95).toFixed(0); // Trigger at 5% below
+    const stopLossLimitPrice = (currentPrice * 0.94).toFixed(0); // Execute at 6% below
+    const takeProfitStopPrice = (currentPrice * 1.10).toFixed(0); // Trigger at 10% above
+    const takeProfitLimitPrice = (currentPrice * 1.09).toFixed(0); // Execute at 9% above
 
-    console.log(`\nSetting up conditional orders:`);
-    console.log(`  Stop-loss at: ${stopLossPrice} ZAR (-5%)`);
-    console.log(`  Take-profit at: ${takeProfitPrice} ZAR (+10%)`);
+    console.log(`\nSetting up stop-limit orders:`);
+    console.log(`  Stop-loss trigger: ${stopLossStopPrice} ZAR, limit: ${stopLossLimitPrice} ZAR`);
+    console.log(`  Take-profit trigger: ${takeProfitStopPrice} ZAR, limit: ${takeProfitLimitPrice} ZAR`);
 
-    // Place stop-loss order
-    const stopLoss = await client.trading.placeConditionalOrder({
+    // Place stop-loss order (STOP_LOSS_LIMIT)
+    const stopLoss = await client.trading.placeStopLimitOrder({
       pair: 'BTCZAR',
       side: 'SELL',
-      type: 'STOP_LOSS',
-      triggerPrice: stopLossPrice,
       quantity: '0.001',
-      price: stopLossPrice, // Limit price
+      price: stopLossLimitPrice,
+      stopPrice: stopLossStopPrice,
+      type: 'STOP_LOSS_LIMIT',
+      timeInForce: 'GTC',
       customerOrderId: `sl-${Date.now()}`,
     });
 
     console.log(`\n✓ Stop-loss order placed: ${stopLoss.id}`);
 
-    // Place take-profit order
-    const takeProfit = await client.trading.placeConditionalOrder({
+    // Place take-profit order (TAKE_PROFIT_LIMIT)
+    const takeProfit = await client.trading.placeStopLimitOrder({
       pair: 'BTCZAR',
       side: 'SELL',
-      type: 'TAKE_PROFIT',
-      triggerPrice: takeProfitPrice,
       quantity: '0.001',
-      price: takeProfitPrice,
+      price: takeProfitLimitPrice,
+      stopPrice: takeProfitStopPrice,
+      type: 'TAKE_PROFIT_LIMIT',
+      timeInForce: 'GTC',
       customerOrderId: `tp-${Date.now()}`,
     });
 
     console.log(`✓ Take-profit order placed: ${takeProfit.id}`);
 
-    // Check all conditional orders
-    const allConditionals = await client.trading.getAllConditionalOrders();
-    console.log(`\nActive conditional orders: ${allConditionals.length}`);
+    // Check all open orders
+    const openOrders = await client.trading.getAllOpenOrders();
+    const stopOrders = openOrders.filter(
+      (o) => o.orderType === 'STOP_LOSS_LIMIT' || o.orderType === 'TAKE_PROFIT_LIMIT'
+    );
+    console.log(`\nActive stop-limit orders: ${stopOrders.length}`);
 
-    allConditionals.forEach((order) => {
-      console.log(`\n  ${order.type}:`);
-      console.log(`    Trigger Price: ${order.triggerPrice}`);
+    stopOrders.forEach((order) => {
+      console.log(`\n  ${order.orderType}:`);
+      console.log(`    Stop Price: ${order.stopPrice}`);
+      console.log(`    Limit Price: ${order.originalPrice}`);
       console.log(`    Status: ${order.status}`);
     });
+
+    // Clean up - cancel the orders
+    console.log(`\nCancelling orders...`);
+    await client.trading.cancelOrder({ pair: 'BTCZAR', orderId: stopLoss.id });
+    await client.trading.cancelOrder({ pair: 'BTCZAR', orderId: takeProfit.id });
+    console.log(`✓ Orders cancelled`);
   } catch (error: any) {
     console.error('Error:', error.message);
   }
@@ -189,7 +215,7 @@ async function conditionalOrdersExample() {
 /**
  * Example 4: Order modification
  */
-async function orderModificationExample() {
+export async function orderModificationExample() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -210,7 +236,8 @@ async function orderModificationExample() {
       side: 'BUY',
       quantity: '0.001',
       price: initialPrice,
-      postOnly: 'POST_ONLY_REPRICE',
+      postOnly: true,
+      postOnlyReprice: true,
       customerOrderId: `modify-test-${Date.now()}`,
     });
 
@@ -224,13 +251,15 @@ async function orderModificationExample() {
 
     console.log(`\nModifying order:`);
     console.log(`  New price: ${newPrice} ZAR`);
-    console.log(`  New quantity: ${newQuantity} BTC`);
+    console.log(`  New remaining quantity: ${newQuantity} BTC`);
 
+    // Modify the order using the correct API fields
     const modified = await client.trading.modifyOrder({
       orderId: order.id,
       pair: 'BTCZAR',
-      price: newPrice,
-      quantity: newQuantity,
+      modifyMatchStrategy: 'RETAIN_ORIGINAL', // Keep original if modification would match
+      newPrice: newPrice,
+      newRemainingQuantity: newQuantity,
     });
 
     console.log(`✓ Order modified: ${modified.id}`);
@@ -252,7 +281,7 @@ async function orderModificationExample() {
 /**
  * Example 5: Simple buy/sell with instant quotes
  */
-async function simpleTradeExample() {
+export async function simpleTradeExample() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -296,6 +325,6 @@ async function simpleTradeExample() {
 
 // advancedOrderPlacement().catch(console.error);
 // batchOrderExample().catch(console.error);
-// conditionalOrdersExample().catch(console.error);
+// stopLimitOrdersExample().catch(console.error);
 // orderModificationExample().catch(console.error);
 simpleTradeExample().catch(console.error);

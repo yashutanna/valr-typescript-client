@@ -23,7 +23,7 @@ dotenv.config();
 /**
  * Option 1: Using a subaccount API key (most common)
  */
-async function subaccountKeyExample() {
+export async function subaccountKeyExample() {
   // If your API key was created on the subaccount itself
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!, // Subaccount API key
@@ -49,7 +49,7 @@ async function subaccountKeyExample() {
 /**
  * Option 2: Using primary account key to impersonate subaccount
  */
-async function subaccountImpersonationExample() {
+export async function subaccountImpersonationExample() {
   // Initialize client with PRIMARY account key to impersonate a subaccount
   const client = new ValrClient({
     apiKey: process.env.VALR_PRIMARY_API_KEY!, // Primary account key
@@ -99,7 +99,7 @@ async function subaccountImpersonationExample() {
 /**
  * Example: Staking/Lending with Subaccount
  */
-async function subaccountStakingExample() {
+export async function subaccountStakingExample() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,

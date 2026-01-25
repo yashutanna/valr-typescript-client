@@ -5,7 +5,7 @@ dotenv.config();
 /**
  * Example 1: Trade WebSocket - Real-time market data (no authentication required)
  */
-async function tradeWebSocketExample() {
+export async function tradeWebSocketExample() {
   console.log('=== Trade WebSocket Example ===\n');
 
   const wsClient = new TradeWebSocket();
@@ -71,7 +71,7 @@ async function tradeWebSocketExample() {
 /**
  * Example 2: Account WebSocket - Real-time account updates (requires authentication)
  */
-async function accountWebSocketExample() {
+export async function accountWebSocketExample() {
   console.log('=== Account WebSocket Example ===\n');
 
   if (!process.env.VALR_API_KEY || !process.env.VALR_API_SECRET) {
@@ -149,7 +149,7 @@ async function accountWebSocketExample() {
 /**
  * Example 3: Multiple subscriptions on Trade WebSocket
  */
-async function multipleSubscriptionsExample() {
+export async function multipleSubscriptionsExample() {
   console.log('=== Multiple Subscriptions Example ===\n');
 
   const wsClient = new TradeWebSocket();
@@ -182,6 +182,7 @@ async function multipleSubscriptionsExample() {
     orderBookCount++;
     if (orderBookCount % 10 === 0) {
       console.log(`[${orderBookCount}] Order book updates received`);
+      console.log(update)
     }
   });
 
@@ -203,7 +204,7 @@ async function multipleSubscriptionsExample() {
 /**
  * Example 4: Auto-reconnection on disconnect
  */
-async function autoReconnectExample() {
+export async function autoReconnectExample() {
   console.log('=== Auto-Reconnect Example ===\n');
 
   const wsClient = new TradeWebSocket({

@@ -36,12 +36,11 @@ export type OrderStatus =
   | 'PENDING';
 
 /**
- * Post-only order behavior
+ * Post-only order flag
+ * When true, prevents the order from immediately matching against existing orders.
+ * If the order would match, it is cancelled instead.
  */
-export type PostOnly =
-  | 'POST_ONLY_REPRICE'
-  | 'POST_ONLY_REJECT'
-  | 'NOT_POST_ONLY';
+export type PostOnly = boolean;
 
 /**
  * Transaction type
@@ -181,9 +180,3 @@ export type ConditionalOrderType =
   | 'STOP_LOSS'
   | 'TAKE_PROFIT';
 
-/**
- * Batch order status
- */
-export type BatchOrderStatus =
-  | 'ACCEPTED'
-  | 'FAILED';

@@ -53,7 +53,7 @@ async function viewFuturesPositions() {
 /**
  * Example 2: Manage leverage settings
  */
-async function manageLeverage() {
+export async function manageLeverage() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -68,7 +68,6 @@ async function manageLeverage() {
     const leverageInfo = await client.futures.getLeverageInfo(pair);
     console.log(`Current leverage for ${pair}:`);
     console.log(`  Current: ${leverageInfo.leverageMultiple}x`);
-    console.log(`  Maximum: ${leverageInfo.maxLeverageMultiple}x\n`);
 
     // Get available leverage options
     const options = await client.public.getAvailableLeverageOptions(pair);
@@ -95,7 +94,7 @@ async function manageLeverage() {
 /**
  * Example 3: View funding history
  */
-async function viewFundingHistory() {
+export async function viewFundingHistory() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
@@ -135,7 +134,7 @@ async function viewFundingHistory() {
 /**
  * Example 4: Futures information and contract details
  */
-async function viewFuturesInfo() {
+export async function viewFuturesInfo() {
   const client = new ValrClient();
 
   try {
@@ -161,7 +160,7 @@ async function viewFuturesInfo() {
 /**
  * Example 5: Position history and analysis
  */
-async function analyzePositionHistory() {
+export async function analyzePositionHistory() {
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!,
     apiSecret: process.env.VALR_API_SECRET!,
