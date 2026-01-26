@@ -1,4 +1,4 @@
-import { ValrWebSocketClient, WebSocketClientConfig, WebSocketEvents } from './ValrWebSocketClient';
+import { ValrWebSocketClient, WebSocketClientConfig } from './ValrWebSocketClient';
 import {WS_ACCOUNT_URL_PATH} from '../utils/constants';
 import type {
   WebSocketMessage,
@@ -10,19 +10,20 @@ import type {
 } from '../types';
 
 /**
- * Account WebSocket events (in addition to base events)
+ * Account WebSocket event names
  */
-export interface AccountWebSocketEvents {
-  'order:processed': (data: OrderProcessed) => void;
-  'order:statusUpdate': (data: OrderStatusUpdate) => void;
-  'balance:update': (data: BalanceUpdate) => void;
-  'trade:new': (data: WebSocketAccountTrade) => void;
-}
-
-/**
- * Combined event types for AccountWebSocket
- */
-export type AccountWebSocketEventMap = WebSocketEvents & AccountWebSocketEvents;
+export type AccountWebSocketEventName =
+  | 'connected'
+  | 'authenticated'
+  | 'message'
+  | 'error'
+  | 'close'
+  | 'disconnected'
+  | 'reconnecting'
+  | 'order:processed'
+  | 'order:statusUpdate'
+  | 'balance:update'
+  | 'trade:new';
 
 /**
  * Account WebSocket client for real-time account updates
@@ -59,7 +60,7 @@ export type AccountWebSocketEventMap = WebSocketEvents & AccountWebSocketEvents;
  * wsClient.connect();
  * ```
  */
-export class AccountWebSocket extends ValrWebSocketClient<AccountWebSocketEventMap> {
+export class AccountWebSocket extends ValrWebSocketClient {
   constructor(config: WebSocketClientConfig) {
     if (!config.apiKey || !config.apiSecret) {
       throw new Error('API key and secret are required for Account WebSocket');

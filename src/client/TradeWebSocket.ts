@@ -1,4 +1,4 @@
-import { ValrWebSocketClient, WebSocketClientConfig, WebSocketEvents } from './ValrWebSocketClient';
+import { ValrWebSocketClient, WebSocketClientConfig } from './ValrWebSocketClient';
 import {WS_TRADE_URL_PATH} from '../utils/constants';
 import type {
   WebSocketMessage,
@@ -10,18 +10,19 @@ import type {
 } from '../types';
 
 /**
- * Trade WebSocket events (in addition to base events)
+ * Trade WebSocket event names
  */
-export interface TradeWebSocketEvents {
-  'orderbook:update': (data: OrderBookUpdate) => void;
-  'market:summary': (data: MarketSummaryUpdate) => void;
-  'trade:new': (data: NewTrade) => void;
-}
-
-/**
- * Combined event types for TradeWebSocket
- */
-export type TradeWebSocketEventMap = WebSocketEvents & TradeWebSocketEvents;
+export type TradeWebSocketEventName =
+  | 'connected'
+  | 'authenticated'
+  | 'message'
+  | 'error'
+  | 'close'
+  | 'disconnected'
+  | 'reconnecting'
+  | 'orderbook:update'
+  | 'market:summary'
+  | 'trade:new';
 
 /**
  * Trade WebSocket client for real-time market data
@@ -54,7 +55,7 @@ export type TradeWebSocketEventMap = WebSocketEvents & TradeWebSocketEvents;
  * wsClient.connect();
  * ```
  */
-export class TradeWebSocket extends ValrWebSocketClient<TradeWebSocketEventMap> {
+export class TradeWebSocket extends ValrWebSocketClient {
   constructor(config: WebSocketClientConfig = {}) {
     super(WS_TRADE_URL_PATH, config);
   }

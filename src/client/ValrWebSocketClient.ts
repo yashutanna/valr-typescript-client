@@ -1,5 +1,5 @@
 import WebSocket from 'ws';
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'node:events';
 import { RequestSigner } from '../auth/RequestSigner';
 import { ValrWebSocketError } from '../errors/ValrError';
 import type { WebSocketMessage } from '../types';
@@ -40,8 +40,9 @@ export interface WebSocketEvents {
 
 /**
  * Base WebSocket client for VALR API
+ * Uses Node.js native EventEmitter (zero dependencies)
  */
-export abstract class ValrWebSocketClient<TEvents extends WebSocketEvents = WebSocketEvents> extends EventEmitter<TEvents> {
+export abstract class ValrWebSocketClient extends EventEmitter {
   protected ws?: WebSocket;
   protected url: string;
   protected path: string;

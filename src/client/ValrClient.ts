@@ -152,21 +152,21 @@ export class ValrClient {
     });
 
     // Add request interceptor for authentication
-    this.http.getInstance().interceptors.request.use((config) => {
+    this.http.addRequestInterceptor((config) => {
       // Only add auth headers for authenticated requests
       if (this.apiKey && this.apiSecret) {
         const timestamp = RequestSigner.getTimestamp();
-        const method = config.method?.toUpperCase() || 'GET';
-        let url = config.url || '';
+        const method = config.method.toUpperCase();
+        let url = config.url;
         const body = config.data ? JSON.stringify(config.data) : '';
 
         // Include query parameters in the signature path
         if (config.params) {
-          // Build query string WITHOUT encoding to match what Axios sends
+          // Build query string WITHOUT encoding to match what fetch sends
           // and what VALR expects in the signature
           const queryParts: string[] = [];
           Object.keys(config.params).sort().forEach(key => {
-            const value = config.params[key];
+            const value = config.params![key];
             if (value !== undefined && value !== null) {
               // Don't URL encode - use raw values
               queryParts.push(`${key}=${value}`);
@@ -177,7 +177,7 @@ export class ValrClient {
           }
 
           // Update config.url with the query string and clear params
-          // so Axios uses our exact URL instead of building its own query string
+          // so our HTTP client uses our exact URL instead of building its own query string
           config.url = url;
           delete config.params;
         }
@@ -195,7 +195,6 @@ export class ValrClient {
         config.headers[HEADERS.API_KEY] = this.apiKey;
         config.headers[HEADERS.SIGNATURE] = signature;
         config.headers[HEADERS.TIMESTAMP] = timestamp.toString();
-        config.headers[HEADERS.CONTENT_TYPE] = config.headers.getContentType();
 
         // Add subaccount header if provided
         if (this.subaccountId) {
