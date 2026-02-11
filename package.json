@@ -1,6 +1,6 @@
 {
   "name": "valr-typescript-client",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "Official TypeScript/JavaScript SDK for VALR API - South African crypto exchange. Fully typed REST client with WebSocket support for Bitcoin, Ethereum trading. Complete API coverage for spot, futures, margin trading.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
