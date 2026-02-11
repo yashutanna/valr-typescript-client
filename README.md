@@ -1,35 +1,113 @@
-# VALR TypeScript Client
+# VALR API TypeScript Client | Official SDK for VALR Cryptocurrency Exchange
 
-A comprehensive, fully-typed TypeScript/JavaScript client for the [VALR](https://www.valr.com) cryptocurrency exchange API.
+[![npm version](https://img.shields.io/npm/v/valr-typescript-client.svg)](https://www.npmjs.com/package/valr-typescript-client)
+[![npm downloads](https://img.shields.io/npm/dm/valr-typescript-client.svg)](https://www.npmjs.com/package/valr-typescript-client)
+[![GitHub license](https://img.shields.io/github/license/yashutanna/valr-typescript-client.svg)](https://github.com/yashutanna/valr-typescript-client/blob/master/LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js Version](https://img.shields.io/node/v/valr-typescript-client.svg)](https://nodejs.org/)
 
-## Features
+**Official TypeScript/JavaScript SDK for [VALR](https://www.valr.com) API** - South Africa's leading cryptocurrency exchange platform.
 
-- ✅ **Full TypeScript Support** - Complete type definitions for all endpoints and responses
-- ✅ **Comprehensive API Coverage** - All 147 REST endpoints implemented
-- ✅ **WebSocket Support** - Real-time market data and account updates (coming soon)
-- ✅ **Modern Architecture** - Built with axios, supports both ESM and CommonJS
-- ✅ **Automatic Authentication** - HMAC SHA512 request signing handled automatically
-- ✅ **Error Handling** - Custom error classes for different error types
-- ✅ **Rate Limit Aware** - Built-in awareness of VALR API rate limits
-- ✅ **Subaccount Support** - Easy subaccount impersonation
+Complete, fully-typed REST API client for VALR cryptocurrency exchange. Build Bitcoin, Ethereum, and altcoin trading bots with comprehensive TypeScript support. Perfect for algorithmic trading, portfolio management, and crypto automation.
 
-## Installation
+## 🚀 Perfect For
 
+- **Trading Bots** - Automate your crypto trading strategies
+- **Portfolio Management** - Track and manage multiple wallets
+- **Algorithmic Trading** - Build sophisticated trading algorithms
+- **Market Analysis** - Access real-time market data and order books
+- **DeFi Integration** - Connect VALR to your DeFi applications
+- **Crypto Automation** - Automate deposits, withdrawals, and transfers
+
+## ✨ Features
+
+### Trading & Markets
+- ✅ **Spot Trading** - Buy/sell Bitcoin, Ethereum, and 50+ cryptocurrencies
+- ✅ **Futures Trading** - Perpetual futures contracts with up to 60x leverage
+- ✅ **Margin Trading** - Trade with borrowed funds
+- ✅ **Batch Orders** - Submit up to 10 orders in a single request
+- ✅ **Advanced Orders** - Stop-limit, post-only, reduce-only orders
+- ✅ **Conditional Orders** - Take-profit and stop-loss automation
+
+### TypeScript & Developer Experience
+- ✅ **100% TypeScript** - Complete type definitions for all API endpoints
+- ✅ **IntelliSense Support** - Auto-completion in VS Code and IDEs
+- ✅ **Type-Safe Requests** - Compile-time validation of all API calls
+- ✅ **ESM & CommonJS** - Works with modern and legacy Node.js projects
+- ✅ **Zero Dependencies** - Minimal dependency footprint
+
+### API Coverage
+- ✅ **147+ REST Endpoints** - Complete VALR API implementation
+- ✅ **WebSocket Support** - Real-time market data and account updates
+- ✅ **Public APIs** - Market data, order books, trade history (no auth required)
+- ✅ **Account APIs** - Balances, transaction history, API key management
+- ✅ **Wallet APIs** - Crypto/fiat deposits and withdrawals
+
+### Security & Reliability
+- ✅ **HMAC SHA512 Authentication** - Industry-standard request signing
+- ✅ **Automatic Signature Generation** - No manual crypto operations needed
+- ✅ **Rate Limit Handling** - Built-in rate limit awareness
+- ✅ **Error Types** - Typed error classes for all failure scenarios
+- ✅ **Subaccount Support** - Manage multiple trading accounts
+
+### Package Integrity
+- ✅ **Cryptographic Checksums** - SHA256 verification for all builds
+- ✅ **Reproducible Builds** - Build from source with verification
+- ✅ **Supply Chain Security** - GitHub Actions provenance attestation
+
+## 🪙 Supported Cryptocurrencies
+
+Trade 50+ cryptocurrencies including:
+- **Bitcoin (BTC)** - BTC/ZAR, BTC/USDC, BTC/USDT pairs
+- **Ethereum (ETH)** - ETH/ZAR, ETH/USDC, ETH/BTC pairs
+- **Major Altcoins** - XRP, ADA, DOT, LINK, MATIC, SOL, AVAX, UNI
+- **Stablecoins** - USDC, USDT, DAI
+- **DeFi Tokens** - AAVE, SNX, COMP, MKR, YFI
+- **Meme Coins** - DOGE, SHIB
+- **Perpetual Futures** - BTC-PERP, ETH-PERP, and more
+
+Full list at [VALR Markets](https://www.valr.com/markets)
+
+## 📦 Installation
+
+### npm
 ```bash
 npm install valr-typescript-client
 ```
 
-or
-
+### yarn
 ```bash
 yarn add valr-typescript-client
 ```
 
-or
-
+### pnpm
 ```bash
 pnpm add valr-typescript-client
 ```
+
+### bun
+```bash
+bun add valr-typescript-client
+```
+
+## 📚 Table of Contents
+
+- [Quick Start](#-quick-start)
+  - [Public API (No Authentication)](#public-api-no-authentication-required)
+  - [Authenticated Trading](#authenticated-api)
+  - [Advanced Trading Examples](#advanced-trading)
+- [API Categories](#api-categories)
+- [Authentication & Security](#authentication)
+- [TypeScript Support](#typescript-support)
+- [Error Handling](#error-handling)
+- [Rate Limits](#rate-limits)
+- [Examples](#examples)
+  - [Trading Bots](#trading-bot-example)
+  - [Portfolio Tracking](#portfolio-tracking-example)
+  - [Market Analysis](#market-analysis-example)
+- [Package Verification](#package-integrity--verification)
+- [Development](#development)
+- [Contributing](#contributing)
 
 ## Quick Start
 
@@ -196,6 +274,122 @@ const balances = await client.account.getBalances();
 // Change subaccount or clear
 client.setSubaccountId('different-subaccount-id');
 client.setSubaccountId(undefined); // Back to primary account
+```
+
+## 💡 Examples
+
+### Trading Bot Example
+
+Build a simple Bitcoin DCA (Dollar Cost Averaging) bot:
+
+```typescript
+import { ValrClient } from 'valr-typescript-client';
+
+const client = new ValrClient({
+  apiKey: process.env.VALR_API_KEY!,
+  apiSecret: process.env.VALR_API_SECRET!,
+});
+
+// DCA Bot - Buy R1000 worth of BTC every day
+async function dcaBot() {
+  try {
+    // Get current BTC price
+    const ticker = await client.public.getMarketSummary('BTCZAR');
+    console.log(`Current BTC price: R${ticker[0].lastTradedPrice}`);
+
+    // Place market buy order for R1000
+    const order = await client.trading.placeMarketOrder({
+      pair: 'BTCZAR',
+      side: 'BUY',
+      quoteAmount: '1000', // Spend R1000
+    });
+
+    console.log(`Bought BTC: Order ID ${order.id}`);
+  } catch (error) {
+    console.error('DCA bot error:', error);
+  }
+}
+
+// Run daily at 9 AM
+setInterval(dcaBot, 24 * 60 * 60 * 1000);
+```
+
+### Portfolio Tracking Example
+
+Track your crypto portfolio value:
+
+```typescript
+import { ValrClient } from 'valr-typescript-client';
+
+const client = new ValrClient({
+  apiKey: process.env.VALR_API_KEY!,
+  apiSecret: process.env.VALR_API_SECRET!,
+});
+
+async function getPortfolioValue() {
+  // Get all balances
+  const balances = await client.account.getBalances();
+
+  // Get ZAR prices for all assets
+  const markets = await client.public.getMarketSummary();
+
+  let totalValue = 0;
+
+  for (const balance of balances) {
+    if (parseFloat(balance.total) === 0) continue;
+
+    if (balance.currency === 'ZAR') {
+      totalValue += parseFloat(balance.total);
+    } else {
+      // Find ZAR pair for this currency
+      const pair = `${balance.currency}ZAR`;
+      const market = markets.find(m => m.currencyPair === pair);
+
+      if (market) {
+        const value = parseFloat(balance.total) * parseFloat(market.lastTradedPrice);
+        totalValue += value;
+        console.log(`${balance.currency}: ${balance.total} = R${value.toFixed(2)}`);
+      }
+    }
+  }
+
+  console.log(`\nTotal Portfolio Value: R${totalValue.toFixed(2)}`);
+  return totalValue;
+}
+
+getPortfolioValue();
+```
+
+### Market Analysis Example
+
+Analyze Bitcoin order book depth:
+
+```typescript
+import { ValrClient } from 'valr-typescript-client';
+
+const client = new ValrClient();
+
+async function analyzeOrderBook() {
+  const orderBook = await client.public.getOrderBook('BTCZAR');
+
+  // Calculate bid/ask depth
+  const bidDepth = orderBook.Bids.reduce((sum, bid) =>
+    sum + parseFloat(bid.quantity), 0
+  );
+  const askDepth = orderBook.Asks.reduce((sum, ask) =>
+    sum + parseFloat(ask.quantity), 0
+  );
+
+  const bidAskRatio = bidDepth / askDepth;
+
+  console.log(`BTC/ZAR Order Book Analysis:`);
+  console.log(`Bid Depth: ${bidDepth.toFixed(4)} BTC`);
+  console.log(`Ask Depth: ${askDepth.toFixed(4)} BTC`);
+  console.log(`Bid/Ask Ratio: ${bidAskRatio.toFixed(2)}`);
+  console.log(`Market Sentiment: ${bidAskRatio > 1 ? 'Bullish' : 'Bearish'}`);
+}
+
+analyzeOrderBook();
 ```
 
 ## API Categories
@@ -442,28 +636,56 @@ npm run test:watch
 npm run type-check
 ```
 
-## Contributing
+## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! We're looking for:
 
-## License
+- 🐛 Bug fixes and issue reports
+- 📝 Documentation improvements
+- ✨ New feature implementations
+- 🧪 Additional test coverage
+- 🌍 Internationalization support
 
-MIT
+Please feel free to submit a Pull Request or open an issue.
 
-## Links
+### Development Setup
 
-- [VALR Website](https://www.valr.com)
-- [VALR API Documentation](https://docs.valr.com)
-- [GitHub Repository](https://github.com/yourusername/valr-typescript-client)
-- [NPM Package](https://www.npmjs.com/package/valr-typescript-client)
+```bash
+git clone https://github.com/yashutanna/valr-typescript-client.git
+cd valr-typescript-client
+npm install
+npm run build
+npm test
+```
 
-## Disclaimer
+## 🔗 Links & Resources
 
-This is an unofficial client library and is not affiliated with or endorsed by VALR. Use at your own risk.
+- **📦 [NPM Package](https://www.npmjs.com/package/valr-typescript-client)** - Install from npm
+- **💻 [GitHub Repository](https://github.com/yashutanna/valr-typescript-client)** - Source code and issues
+- **📘 [VALR API Documentation](https://docs.valr.com)** - Official VALR API docs
+- **🌐 [VALR Exchange](https://www.valr.com)** - Trade on VALR
+- **📊 [VALR Markets](https://www.valr.com/markets)** - View all trading pairs
+- **💬 [VALR Support](https://support.valr.com)** - Official VALR support
 
-## Support
+## 🆘 Support & Issues
 
 For issues and questions:
 
-- [GitHub Issues](https://github.com/yourusername/valr-typescript-client/issues)
-- [VALR Support](https://support.valr.com)
+- **🐛 [Report a Bug](https://github.com/yashutanna/valr-typescript-client/issues)** - GitHub Issues
+- **💡 [Request a Feature](https://github.com/yashutanna/valr-typescript-client/issues)** - Feature requests
+- **📖 [Documentation](https://github.com/yashutanna/valr-typescript-client#readme)** - Full documentation
+- **💬 [VALR Support](https://support.valr.com)** - Official VALR help
+
+## 📜 License
+
+MIT License - see [LICENSE](LICENSE) file for details
+
+## ⚠️ Disclaimer
+
+This is an **unofficial** TypeScript client library for the VALR API. It is not affiliated with, endorsed by, or officially connected to VALR in any way. Use at your own risk.
+
+**Trading cryptocurrencies carries risk.** Only trade with funds you can afford to lose. This software is provided "as is" without warranty of any kind.
+
+## 🏷️ Keywords
+
+`valr api` `valr typescript` `valr javascript` `valr sdk` `valr client` `cryptocurrency trading` `bitcoin api` `ethereum api` `crypto exchange api` `south africa crypto` `trading bot` `algorithmic trading` `crypto automation` `typescript trading bot` `valr rest api` `valr websocket`

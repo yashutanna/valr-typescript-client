@@ -8,7 +8,7 @@ function sleep(ms: number): Promise<void> {
 /**
  * Option 1: Using a subaccount API key (most common)
  */
-async function PayRecipientUsingCellphoneNumber(cell: string) {
+export async function PayRecipientUsingCellphoneNumber(cell: string) {
   // If your API key was created on the subaccount itself
   const client = new ValrClient({
     apiKey: process.env.VALR_API_KEY!, // Subaccount API key
@@ -44,7 +44,23 @@ async function PayRecipientUsingCellphoneNumber(cell: string) {
   }
 }
 
+/**
+ * Get Payment details
+ */
+async function getPaymentDetails(paymentId: string) {
+  // If your API key was created on the subaccount itself
+  const client = new ValrClient({
+    apiKey: process.env.VALR_API_KEY!, // Subaccount API key
+    apiSecret: process.env.VALR_API_SECRET!, // Subaccount API secret
+  });
+
+  const paymentDetails = await client.pay.getPaymentByIdentifier(paymentId)
+
+  console.log({paymentDetails})
+}
+
 
 // Run examples
 // Choose based on your setup:
-PayRecipientUsingCellphoneNumber(process.env.VALR_PAY_RECIPIENT_CELLPHONE_NUMBER!).catch(console.error);
+// PayRecipientUsingCellphoneNumber(process.env.VALR_PAY_RECIPIENT_CELLPHONE_NUMBER!).catch(console.error);
+getPaymentDetails(process.env.VALR_PAY_PAYMENT_ID!).catch(console.error);
