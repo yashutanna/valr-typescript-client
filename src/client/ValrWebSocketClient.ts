@@ -23,6 +23,8 @@ export interface WebSocketClientConfig {
   maxReconnectAttempts?: number;
   /** Base URL for WS (defaults to wss://api.valr.com) */
   baseURL?: string;
+  /** Enable debug logging for the client requests, responses and configs. either defined as true or not passed in */
+  debug?: boolean;
 }
 
 /**
@@ -52,6 +54,7 @@ export abstract class ValrWebSocketClient extends EventEmitter {
   protected isIntentionalClose = false;
   protected isConnected = false;
   protected isAuthenticated = false;
+  protected debug?: true;
 
   constructor(path: string, config: WebSocketClientConfig = {}) {
     super();
@@ -62,7 +65,8 @@ export abstract class ValrWebSocketClient extends EventEmitter {
       autoReconnect: config.autoReconnect ?? true,
       reconnectDelay: config.reconnectDelay || 5000,
       maxReconnectAttempts: config.maxReconnectAttempts || Infinity,
-      baseURL: config.baseURL || WS_BASE_URL
+      baseURL: config.baseURL || WS_BASE_URL,
+      debug: config.debug || false,
     };
     this.url = `${this.config.baseURL}${path}`;
     this.path = path;
@@ -107,18 +111,30 @@ export abstract class ValrWebSocketClient extends EventEmitter {
       this.ws = new WebSocket(this.url, wsOptions);
 
       this.ws.on('open', () => {
+        if(this.debug){
+          console.log(`[debug] [ws] path=${this.path} websocket open event`)
+        }
         this.handleOpen();
       });
 
       this.ws.on('message', (data: WebSocket.Data) => {
+        if(this.debug){
+          console.log(`[debug] [ws] path=${this.path} websocket message event: ${data}`)
+        }
         this.handleMessage(data);
       });
 
       this.ws.on('error', (error: Error) => {
+        if(this.debug){
+          console.log(`[debug] [ws] path=${this.path} websocket error event: ${error.message}`)
+        }
         this.handleError(error);
       });
 
       this.ws.on('close', (code: number, reason: Buffer) => {
+        if(this.debug){
+          console.log(`[debug] [ws] path=${this.path} websocket close event`)
+        }
         this.handleClose(code, reason.toString());
       });
     } catch (error) {

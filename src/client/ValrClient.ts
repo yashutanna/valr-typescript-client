@@ -42,6 +42,11 @@ export interface ValrClientConfig {
    * Subaccount ID for impersonating a subaccount (optional)
    */
   subaccountId?: string;
+
+  /**
+   * enable debug logging for the client requests, responses and configs. (optional default=false)
+    */
+  debug?: boolean;
 }
 
 /**
@@ -66,6 +71,7 @@ export class ValrClient {
   private apiKey?: string;
   private apiSecret?: string;
   private subaccountId?: string;
+  private debug?: boolean;
 
   /**
    * Public API methods (no authentication required)
@@ -128,7 +134,7 @@ export class ValrClient {
    * @param config - Client configuration
    */
   constructor(config: ValrClientConfig = {}) {
-    const { apiKey, apiSecret, baseURL, timeout, subaccountId } = config;
+    const { apiKey, apiSecret, baseURL, timeout, subaccountId, debug = false } = config;
 
     // Validate credentials if provided
     if ((apiKey && !apiSecret) || (!apiKey && apiSecret)) {
@@ -144,6 +150,7 @@ export class ValrClient {
     this.apiKey = apiKey;
     this.apiSecret = apiSecret;
     this.subaccountId = subaccountId;
+    this.debug = debug;
 
     // Initialize HTTP client
     this.http = new HttpClient({
@@ -202,6 +209,9 @@ export class ValrClient {
         }
       }
 
+      if(this.debug){
+        console.log(`[debug] request config: ${JSON.stringify(config)}`)
+      }
       return config;
     });
 
